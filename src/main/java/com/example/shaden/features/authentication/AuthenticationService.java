@@ -8,6 +8,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.shaden.exception.custom.DuplicateDataException;
 import com.example.shaden.exception.custom.ResourceNotFoundException;
 import com.example.shaden.features.user.Role;
 import com.example.shaden.features.user.User;
@@ -28,6 +29,15 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
         LOGGER.info("Registering user");
+
+        if (repository.existsByEmail(request.getEmail())) {
+            throw new DuplicateDataException("Email already exists");
+        }
+
+        if (repository.existsByUsername(request.getUsername())) {
+            throw new DuplicateDataException("Username already exists");
+        }
+
         var user = User.builder()
             .username(request.getUsername())
             .email(request.getEmail())
