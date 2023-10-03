@@ -7,14 +7,14 @@
 </Properties>
 
 <Appenders>
-    <Console name="STDOUT" target="SYSTEM_OUT">
+    <Console name="ConsoleAppender" target="SYSTEM_OUT" follow=true>
         <PatternLayout pattern="shree - ${LOG_PATTERN}"/>
     </Console>
 </Appenders>
 
 <Loggers>
     <Root level="all">
-        <AppenderRef ref="STDOUT" />
+        <AppenderRef ref="ConsoleAppender" />
     </Root>
 </Loggers>
 </Configuration>
