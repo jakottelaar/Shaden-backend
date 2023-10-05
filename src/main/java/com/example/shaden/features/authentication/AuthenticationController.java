@@ -2,6 +2,8 @@ package com.example.shaden.features.authentication;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +21,8 @@ public class AuthenticationController {
     
     private final AuthenticationService authService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
+
     @PostMapping(value = "/register")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
@@ -26,10 +30,11 @@ public class AuthenticationController {
 
     @PostMapping(value = "/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
+        LOGGER.info("Login controller endpoint called.");
         return ResponseEntity.ok(authService.authenticate(request));
     }
 
-    @PostMapping("/refresh-token")
+    @PostMapping(value = "/refresh-token")
     public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request) throws IOException {
         AuthenticationResponse response = authService.refreshToken(request);
         return ResponseEntity.ok(response);

@@ -76,7 +76,7 @@ public class AuthenticationService {
         final String userEmail;
     
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new ResourceNotFoundException("Invalid refresh token");
+            throw new ResourceNotFoundException("No authorization header or refresh token");
         }
     
         refreshToken = authorizationHeader.substring(7);
