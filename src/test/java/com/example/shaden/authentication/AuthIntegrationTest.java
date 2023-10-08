@@ -24,7 +24,7 @@ import org.json.JSONObject;
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application-test.yml")
-@ActiveProfiles("test")
+@ActiveProfiles("prod-test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthIntegrationTest {
     
