@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/shaden-test
+    username: postgres
+    password: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+  devtools:
+    restart:
+      enabled: true
+logging:
+  level:
+    root: WARN
+    "[org.springframework.security.web]": DEBUG
+    "[org.springframework.boot.orm.jpa.hibernate]": ERROR

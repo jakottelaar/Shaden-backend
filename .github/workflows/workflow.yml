@@ -39,8 +39,14 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
+      - name: Copy application-test.yml
+        run: cp src/main/resources/application-prod-test.yml src/main/resources/application.yml
+
       - name: Run Unit tests
         run: mvn -B test --file pom.xml
+
+      - name: Restore application.yml
+        run: cp src/main/resources/application.yml src/main/resources/application-prod-test.yml
 
       - name: Build the application
         run: |
