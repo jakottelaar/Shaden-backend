@@ -42,18 +42,25 @@ public class UserService {
     }
 
     public void deleteUserWithId(Long userId) {
+        User userToDelete = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+        userRepository.delete(userToDelete);
+    }
 
-        Optional<User> user = userRepository.findById(userId);
+    public void deleteUserWithEmail() {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        // Create global catch for non authenticated user or admin
-        if (user.isPresent() && auth != null && auth.isAuthenticated() && user.get().getEmail().equals(auth.getName())) {
-            userRepository.delete(user.get());
-            LOGGER.error("User successfully deleted");
-        } else {
-            LOGGER.error("User not found");
-            throw new ResourceNotFoundException("User not found");
+        if (auth != null && auth.isAuthenticated()) {
+            UserDetails userDetails = (UserDetails) auth.getPrincipal();
+            Optional<User> user = userRepository.findByEmail(userDetails.getUsername());        
+            if (user.isPresent()) {
+                userRepository.delete(user.get());
+                return;
+            }
         }
+        
+        throw new ResourceNotFoundException("User not found");
 
     }
 

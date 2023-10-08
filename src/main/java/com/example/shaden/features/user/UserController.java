@@ -2,7 +2,10 @@ package com.example.shaden.features.user;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,11 +30,19 @@ public class UserController {
         return ResponseEntity.ok(userService.getProfile().get());
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUserWithId(@PathVariable("userId") Long userId) {
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> deleteUserWithId(@PathVariable(value = "id", required = false) Long userId) {
         LOGGER.info("Delete user endpoint called");
         userService.deleteUserWithId(userId);
         return ResponseEntity.ok().body("Successfully deleted user with id");
+    }
+
+    @DeleteMapping("/delete-account")
+    public ResponseEntity<String> deleteUserWithEmail() {
+        LOGGER.info("Delete user endpoint called");
+        userService.deleteUserWithEmail();
+        return ResponseEntity.ok().body("Successfully deleted your account");
     }
 
 }
