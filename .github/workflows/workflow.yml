@@ -40,14 +40,21 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
-      - name: Copy application-prod-test.yml
-        run: cp src/main/resources/application-prod-test.yml src/main/resources/application.yml
+      - name: Set up Environment Variables
+        run: |
+          echo "DB_NAME=${{ secrets.TEST_DB_DATABASE }}" >> $GITHUB_ENV
+          echo "DB_USER=${{ secrets.TEST_DB_USER }}" >> $GITHUB_ENV
+          echo "DB_PASSWORD=${{ secrets.TEST_DB_PASSWORD }}" >> $GITHUB_ENV
+          echo "SPRING_PROFILES_ACTIVE=prod-test" >> $GITHUB_ENV
+
+      - name: Copy application.yml
+        run: cp src/main/resources/application.yml src/main/resources/application-prod-test.yml
 
       - name: Run Unit tests
         run: mvn -B test --file pom.xml
 
-      - name: Restore application.yml
-        run: cp src/main/resources/application.yml src/main/resources/application-prod-test.yml
+      - name: Restore application-prod-test.yml
+        run: cp src/main/resources/application-prod-test.yml src/main/resources/application.yml
 
       - name: Build the application
         run: |
