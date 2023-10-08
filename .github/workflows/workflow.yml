@@ -17,6 +17,7 @@ jobs:
       DB_NAME: ${{ secrets.TEST_DB_DATABASE }}
       DB_USER: ${{ secrets.TEST_DB_USER }}
       DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+      SPRING_PROFILES_ACTIVE: prod-test
 
     services:
       postgres:
@@ -39,7 +40,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
-      - name: Copy application-test.yml
+      - name: Copy application-prod-test.yml
         run: cp src/main/resources/application-prod-test.yml src/main/resources/application.yml
 
       - name: Run Unit tests
