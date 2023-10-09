@@ -12,20 +12,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      DB_NAME: ${{ secrets.TEST_DB_DATABASE }}
-      DB_USER: ${{ secrets.TEST_DB_USER }}
-      DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-      SPRING_PROFILES_ACTIVE: prod-test
-
     services:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: ${{ secrets.TEST_DB_DATABASE }}
-          POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          POSTGRES_DB: testdb
+          POSTGRES_USER: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          POSTGRES_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -40,21 +33,18 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
-      - name: Set up Environment Variables
-        run: |
-          echo "DB_NAME=${{ secrets.TEST_DB_DATABASE }}" >> $GITHUB_ENV
-          echo "DB_USER=${{ secrets.TEST_DB_USER }}" >> $GITHUB_ENV
-          echo "DB_PASSWORD=${{ secrets.TEST_DB_PASSWORD }}" >> $GITHUB_ENV
-          echo "SPRING_PROFILES_ACTIVE=prod-test" >> $GITHUB_ENV
+      - name: Run Unit Tests
+        run: mvn test
 
-      - name: Copy application.yml
-        run: cp src/main/resources/application.yml src/main/resources/application-prod-test.yml
+      - name: Set up .env file
+        run:
+          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" > .env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
 
-      - name: Run Unit tests
-        run: mvn -B test --file pom.xml
-
-      - name: Restore application-prod-test.yml
-        run: cp src/main/resources/application-prod-test.yml src/main/resources/application.yml
+      - name: Run Integration Tests
+        run: mvn verify
 
       - name: Build the application
         run: |
