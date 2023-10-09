@@ -38,6 +38,24 @@ public class AuthIntegrationTest {
 
     @Test
     @Order(2)
+    public void invalidInputAccountRegistration() throws Exception {
+        String jsonRequest = "{\"username\":\"\",\"email\":\"testmail.com\",\"password\":\"Testpass\"}";
+   
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
+                .content(jsonRequest)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        
+        String responseBody = result.getResponse().getContentAsString();
+
+        assert(responseBody.contains("Username is required"));
+        assert(responseBody.contains("Invalid email format"));
+        assert(responseBody.contains("Password must contain at least one letter, one digit, and be 8 or more characters long"));
+    }
+
+    @Test
+    @Order(3)
     public void accountWithEmailAlreadyExists() throws Exception {
         String jsonRequest = "{\"username\":\"testUsername\",\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
 
@@ -48,7 +66,7 @@ public class AuthIntegrationTest {
     }
    
     @Test
-    @Order(3)
+    @Order(4)
     public void testLogin() throws Exception {
         String jsonRequest = "{\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
    
@@ -65,7 +83,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    @Order(4)
+    @Order(5)
     public void testInvalidCredentialsLogin() throws Exception {
 
         String jsonRequest = "{\"email\":\"test@mail.com\",\"password\":\"Testpass1\"}";
@@ -81,7 +99,7 @@ public class AuthIntegrationTest {
     }
 
     @Test
-    @Order(5)
+    @Order(6)
     public void testRefreshToken() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/refresh-token")
@@ -98,7 +116,7 @@ public class AuthIntegrationTest {
 
 
     @Test
-    @Order(6)
+    @Order(7)
     public void deleteRegisteredUser() throws Exception {
    
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
