@@ -16,7 +16,7 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: testdb
+          POSTGRES_DB: shaden-test
           POSTGRES_USER: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
           POSTGRES_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
         ports:
@@ -32,13 +32,6 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
-
-      - name: Set up .env file
-        run:
-          echo "SPRING_DATASOURCE_URL=${{ secrets.SPRING_DATASOURCE_URL }}" > .env
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
-          echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
 
       - name: Print .env file
         run: cat .env
