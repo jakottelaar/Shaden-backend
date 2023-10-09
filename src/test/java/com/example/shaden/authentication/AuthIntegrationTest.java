@@ -59,13 +59,11 @@ public class AuthIntegrationTest {
         JSONObject jsonResponse = new JSONObject(responseBody);
         accessToken = jsonResponse.getString("access_token");
 
-        LOG.info(accessToken);
     }
    
     @Test
     @Order(3)
     public void deleteRegisteredUser() throws Exception {
-        LOG.info(accessToken);
    
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
                 .header("Authorization", "Bearer " + accessToken)
