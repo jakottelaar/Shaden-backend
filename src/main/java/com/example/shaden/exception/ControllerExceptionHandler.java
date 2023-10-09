@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.example.shaden.exception.custom.DuplicateDataException;
 import com.example.shaden.exception.custom.ResourceNotFoundException;
+import com.example.shaden.exception.custom.UnauthorizedException;
 
 @RestControllerAdvice
 public class ControllerExceptionHandler {
@@ -38,6 +39,16 @@ public class ControllerExceptionHandler {
     public ErrorMessage duplicateDataHandler(Exception e) {
         ErrorMessage error = new ErrorMessage();
         error.setStatusCode(HttpStatus.CONFLICT.value());
+        error.setTimestamp(new Date());
+        error.setMessage(e.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorMessage unauthorizedHandler(Exception e) {
+        ErrorMessage error = new ErrorMessage();
+        error.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         error.setTimestamp(new Date());
         error.setMessage(e.getMessage());
         return error;

@@ -1,15 +1,19 @@
 package com.example.shaden.features.authentication;
 
+import java.util.Optional;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.DuplicateDataException;
 import com.example.shaden.exception.custom.ResourceNotFoundException;
+import com.example.shaden.exception.custom.UnauthorizedException;
 import com.example.shaden.features.user.Role;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
@@ -57,11 +61,21 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         LOGGER.info("Authenticating user");
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+    
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        } catch (BadCredentialsException e) {
+            throw new UnauthorizedException("Invalid email or password");
+        }
+
+        var user = repository.findByEmail(request.getEmail());
+    
+        if (!user.isPresent()) {
+            throw new ResourceNotFoundException("No user found with email: " + request.getEmail());
+        }
+
+        var jwtToken = jwtService.generateToken(Optional.of(user.get()).get());
+        var refreshToken = jwtService.generateRefreshToken(Optional.of(user.get()).get());
         return AuthenticationResponse
         .builder()
         .accessToken(jwtToken)
