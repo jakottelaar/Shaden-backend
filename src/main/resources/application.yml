@@ -2,9 +2,9 @@ spring:
   config:
     import: optional:file:.env[.properties]
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/shaden-test}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:postgres}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
     properties:
@@ -29,7 +29,7 @@ logging:
 application:
   security:
     jwt:
-      secret-key: ${SECRET_KEY:${{ secrets.SECRET_KEY }}}
+      secret-key: ${SECRET_KEY}
       expiration: 900000
       refresh-token:
         expiration: 604800000

@@ -15,7 +15,7 @@ jobs:
     env:
       SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
       SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-      SPRING_DATASOURCE_URL: ${{ secrets.SPRING_URL }}
+      SPRING_DATASOURCE_URL: ${{ secrets.SPRING_DATASOURCE_URL }}
       SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
     services:
