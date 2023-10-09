@@ -29,7 +29,7 @@ logging:
 application:
   security:
     jwt:
-      secret-key: ${SECRET_KEY:secret-key}
+      secret-key: ${SECRET_KEY:${{ secrets.SECRET_KEY }}}
       expiration: 900000
       refresh-token:
         expiration: 604800000
