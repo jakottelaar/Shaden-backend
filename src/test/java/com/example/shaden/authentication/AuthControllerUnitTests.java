@@ -23,7 +23,7 @@ import com.example.shaden.features.authentication.RegisterRequest;
 
 
 @ExtendWith(MockitoExtension.class)
-public class AuthUnitTests {
+public class AuthControllerUnitTests {
     
     @InjectMocks
     private AuthenticationController authController;
