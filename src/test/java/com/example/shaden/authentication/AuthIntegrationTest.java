@@ -11,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -23,8 +21,6 @@ import org.json.JSONObject;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestPropertySource(locations = "classpath:application-test.yml")
-@ActiveProfiles("prod-test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AuthIntegrationTest {
     
@@ -36,7 +32,7 @@ public class AuthIntegrationTest {
     @Test
     @Order(1)
     public void accountRegistrationTest() throws Exception {
-        String jsonRequest = "{\"username\":\"test\",\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
+        String jsonRequest = "{\"username\":\"testUsername\",\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
    
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                 .content(jsonRequest)
