@@ -1,8 +1,11 @@
 package com.example.shaden.exception;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -51,6 +54,24 @@ public class ControllerExceptionHandler {
         error.setStatusCode(HttpStatus.UNAUTHORIZED.value());
         error.setTimestamp(new Date());
         error.setMessage(e.getMessage());
+        return error;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleValidationException(MethodArgumentNotValidException e) {
+        List<String> validationErrors = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> fieldError.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        ErrorMessage error = new ErrorMessage();
+        error.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        error.setTimestamp(new Date());
+        error.setMessage("Validation failed");
+        error.setErrors(validationErrors);
+
         return error;
     }
 
