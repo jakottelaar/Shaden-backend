@@ -40,6 +40,9 @@ jobs:
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
           echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
 
+      - name: Print .env file
+        run: cat .env
+
       - name: Run Unit tests
         run: mvn -B test --file pom.xml
 
