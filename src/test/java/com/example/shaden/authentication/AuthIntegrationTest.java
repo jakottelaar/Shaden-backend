@@ -66,6 +66,22 @@ public class AuthIntegrationTest {
 
     @Test
     @Order(4)
+    public void testInvalidCredentialsLogin() throws Exception {
+
+        String jsonRequest = "{\"email\":\"test@mail.com\",\"password\":\"Testpass1\"}";
+        
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonRequest))
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+
+        assert(result.getResponse().getContentAsString().contains("Invalid email or password"));
+        
+    }
+
+    @Test
+    @Order(5)
     public void testRefreshToken() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/refresh-token")
@@ -82,7 +98,7 @@ public class AuthIntegrationTest {
 
 
     @Test
-    @Order(5)
+    @Order(6)
     public void deleteRegisteredUser() throws Exception {
    
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
