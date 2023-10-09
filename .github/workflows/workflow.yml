@@ -33,9 +33,6 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
-      - name: Print .env file
-        run: cat .env
-
       - name: Run Unit tests
         run: mvn -B test --file pom.xml
 
