@@ -2,9 +2,11 @@ package com.example.shaden.exception;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -70,8 +72,18 @@ public class ControllerExceptionHandler {
         error.setStatusCode(HttpStatus.BAD_REQUEST.value());
         error.setTimestamp(new Date());
         error.setMessage("Validation failed");
-        error.setErrors(validationErrors);
+        error.setErrors(validationErrors.isEmpty() ? null : Optional.of(validationErrors));
 
+        return error;
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorMessage handleAuthenticationException(AuthenticationException e) {
+        ErrorMessage error = new ErrorMessage();
+        error.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        error.setTimestamp(new Date());
+        error.setMessage("Authentication failed");
         return error;
     }
 }
