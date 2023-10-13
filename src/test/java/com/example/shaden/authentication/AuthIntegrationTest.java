@@ -28,7 +28,7 @@ public class AuthIntegrationTest {
     @Test
     @Order(1)
     public void accountRegistrationTest() throws Exception {
-        String jsonRequest = "{\"username\":\"testUsername\",\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
+        String jsonRequest = "{\"username\":\"authTestUsername\",\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
    
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                 .content(jsonRequest)
@@ -57,7 +57,7 @@ public class AuthIntegrationTest {
     @Test
     @Order(3)
     public void accountWithEmailAlreadyExists() throws Exception {
-        String jsonRequest = "{\"username\":\"testUsername\",\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
+        String jsonRequest = "{\"username\":\"authTestUsername\",\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                 .content(jsonRequest)
@@ -68,7 +68,7 @@ public class AuthIntegrationTest {
     @Test
     @Order(4)
     public void testLogin() throws Exception {
-        String jsonRequest = "{\"email\":\"test@mail.com\",\"password\":\"Testpass1234\"}";
+        String jsonRequest = "{\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
    
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +86,7 @@ public class AuthIntegrationTest {
     @Order(5)
     public void testInvalidCredentialsLogin() throws Exception {
 
-        String jsonRequest = "{\"email\":\"test@mail.com\",\"password\":\"Testpass1\"}";
+        String jsonRequest = "{\"email\":\"authtest@mail.com\",\"password\":\"Testpass1\"}";
         
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
