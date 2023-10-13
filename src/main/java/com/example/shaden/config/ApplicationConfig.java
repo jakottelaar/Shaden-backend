@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.shaden.features.user.UserRepository;
+import com.example.shaden.features.user.User;
+import com.example.shaden.features.user.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,8 +25,11 @@ public class ApplicationConfig {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return username -> {
+            User user = repository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+            return new UserPrincipal(user);
+        };
     }
 
     @Bean 
