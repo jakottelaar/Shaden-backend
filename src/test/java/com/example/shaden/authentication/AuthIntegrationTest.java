@@ -12,6 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.json.JSONObject;
@@ -24,6 +27,7 @@ public class AuthIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
     private static String accessToken;
+    private static String refreshToken;
 
     @Test
     @Order(1)
@@ -79,6 +83,7 @@ public class AuthIntegrationTest {
         String responseBody = result.getResponse().getContentAsString();
         JSONObject jsonResponse = new JSONObject(responseBody);
         accessToken = jsonResponse.getString("access_token");
+        refreshToken = jsonResponse.getString("refresh_token");
 
     }
 
@@ -103,7 +108,7 @@ public class AuthIntegrationTest {
     public void testRefreshToken() throws Exception {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/refresh-token")
-                .header("Authorization", "Bearer " + accessToken)
+                .header("Authorization", "Bearer " + refreshToken)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -118,11 +123,20 @@ public class AuthIntegrationTest {
     @Test
     @Order(7)
     public void deleteRegisteredUser() throws Exception {
-   
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+
+        assert(responseBody.contains("Successfully deleted your account"));
+
+        assert(result.getResponse().getStatus() == 204);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+        assert(jsonNode.get("results").isNull());
     }
 
 }
