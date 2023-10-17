@@ -12,12 +12,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.example.shaden.config.JsonParserUtil;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import org.json.JSONObject;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,28 +32,35 @@ public class AuthIntegrationTest {
     public void accountRegistrationTest() throws Exception {
         String jsonRequest = "{\"username\":\"authTestUsername\",\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
    
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("status").asInt() == 201);
+        assert(jsonResponse.get("message").asText().contains("User registered successfully"));
+        assert(jsonResponse.get("results").get("access_token").asText() != null);
+        assert(jsonResponse.get("results").get("refresh_token").asText() != null);
     }
 
     @Test
     @Order(2)
     public void invalidInputAccountRegistration() throws Exception {
         String jsonRequest = "{\"username\":\"\",\"email\":\"testmail.com\",\"password\":\"Testpass\"}";
-   
+
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
-        
-        String responseBody = result.getResponse().getContentAsString();
 
-        assert(responseBody.contains("Username is required"));
-        assert(responseBody.contains("Invalid email format"));
-        assert(responseBody.contains("Password must contain at least one letter, one digit, and be 8 or more characters long"));
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        assert(jsonResponse.get("message").asText().contains("Validation failed"));
+        assert(jsonResponse.get("errors").toString().contains("Username is required"));
+        assert(jsonResponse.get("errors").toString().contains("Invalid email format"));
+        assert(jsonResponse.get("errors").toString().contains("Password must contain at least one letter, one digit, and be 8 or more characters long"));
     }
 
     @Test
@@ -63,10 +68,13 @@ public class AuthIntegrationTest {
     public void accountWithEmailAlreadyExists() throws Exception {
         String jsonRequest = "{\"username\":\"authTestUsername\",\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
                 .content(jsonRequest)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict());
+                .andExpect(status().isConflict()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        assert(jsonResponse.get("message").asText().contains("Email already exists"));
     }
    
     @Test
@@ -80,11 +88,14 @@ public class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
    
-        String responseBody = result.getResponse().getContentAsString();
-        JSONObject jsonResponse = new JSONObject(responseBody);
-        accessToken = jsonResponse.getString("access_token");
-        refreshToken = jsonResponse.getString("refresh_token");
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
+        assert(jsonResponse.get("message").asText().contains("User authenticated successfully"));
+        assert(jsonResponse.get("results").get("access_token").asText() != null);
+        assert(jsonResponse.get("results").get("refresh_token").asText() != null);
+
+        accessToken = jsonResponse.get("results").get("access_token").asText();
+        refreshToken = jsonResponse.get("results").get("refresh_token").asText();
     }
 
     @Test
@@ -101,6 +112,10 @@ public class AuthIntegrationTest {
 
         assert(result.getResponse().getContentAsString().contains("Invalid email or password"));
         
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("message").asText().contains("Invalid email or password"));
+
     }
 
     @Test
@@ -113,9 +128,11 @@ public class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         
-        String responseBody = result.getResponse().getContentAsString();
-        assert(responseBody.contains("access_token"));
-        assert(responseBody.contains("refresh_token"));
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("message").asText().contains("Token refreshed successfully"));
+        assert(jsonResponse.get("results").get("access_token").asText() != null);
+        assert(jsonResponse.get("results").get("refresh_token").asText() != null);
 
     }
 
@@ -126,17 +143,12 @@ public class AuthIntegrationTest {
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
-        assert(responseBody.contains("Successfully deleted your account"));
-
-        assert(result.getResponse().getStatus() == 204);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode jsonNode = objectMapper.readTree(responseBody);
-        assert(jsonNode.get("results").isNull());
+        assert(jsonResponse.get("message").asText().contains("Successfully deleted your account"));
     }
 
 }

@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.example.shaden.features.ResponseData;
 import com.example.shaden.features.authentication.AuthenticationController;
 import com.example.shaden.features.authentication.AuthenticationRequest;
 import com.example.shaden.features.authentication.AuthenticationResponse;
@@ -60,7 +61,7 @@ public class AuthControllerUnitTests {
 
         when(authService.authenticate(any(AuthenticationRequest.class))).thenReturn(authResponse);
 
-        ResponseEntity<AuthenticationResponse> responseEntity = authController.login(authRequest);
+        ResponseEntity<ResponseData> responseEntity = authController.login(authRequest);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
@@ -72,7 +73,7 @@ public class AuthControllerUnitTests {
 
         when(authService.refreshToken(request)).thenReturn(authResponse);
 
-        ResponseEntity<AuthenticationResponse> responseEntity = authController.refreshToken(request);
+        ResponseEntity<ResponseData> responseEntity = authController.refreshToken(request);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
