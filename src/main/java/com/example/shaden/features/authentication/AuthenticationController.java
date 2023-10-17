@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.shaden.features.ResponseData;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,21 +27,39 @@ public class AuthenticationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping(value = "/register")
-    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<ResponseData> register(@Valid @RequestBody RegisterRequest request) {
         AuthenticationResponse response = authService.register(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.CREATED.value());
+        responseData.setMessage("User registered successfully");
+        responseData.setResults(response);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseData);
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
+    public ResponseEntity<ResponseData> login(@Valid @RequestBody AuthenticationRequest request) {
         LOGGER.info("Login controller endpoint called.");
-        return ResponseEntity.ok(authService.authenticate(request));
+        AuthenticationResponse response = authService.authenticate(request);
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.CREATED.value());
+        responseData.setMessage("User authenticated successfully");
+        responseData.setResults(response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
     @PostMapping(value = "/refresh-token")
-    public ResponseEntity<AuthenticationResponse> refreshToken(HttpServletRequest request) throws IOException {
+    public ResponseEntity<ResponseData> refreshToken(HttpServletRequest request) throws IOException {
         AuthenticationResponse response = authService.refreshToken(request);
-        return ResponseEntity.ok(response);
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.CREATED.value());
+        responseData.setMessage("Token refreshed successfully");
+        responseData.setResults(response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
 }
