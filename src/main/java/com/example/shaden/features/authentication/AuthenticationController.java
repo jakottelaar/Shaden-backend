@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shaden.features.ResponseData;
+import com.example.shaden.features.authentication.request.AuthenticationRequest;
+import com.example.shaden.features.authentication.request.RegisterRequest;
+import com.example.shaden.features.authentication.response.AuthenticationResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

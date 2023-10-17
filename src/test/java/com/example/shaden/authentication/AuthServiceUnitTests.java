@@ -11,10 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.shaden.exception.custom.DuplicateDataException;
-import com.example.shaden.features.authentication.AuthenticationResponse;
 import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.JwtService;
-import com.example.shaden.features.authentication.RegisterRequest;
+import com.example.shaden.features.authentication.request.RegisterRequest;
+import com.example.shaden.features.authentication.response.AuthenticationResponse;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
 

@@ -17,10 +17,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.example.shaden.features.ResponseData;
 import com.example.shaden.features.authentication.AuthenticationController;
-import com.example.shaden.features.authentication.AuthenticationRequest;
-import com.example.shaden.features.authentication.AuthenticationResponse;
 import com.example.shaden.features.authentication.AuthenticationService;
-import com.example.shaden.features.authentication.RegisterRequest;
+import com.example.shaden.features.authentication.request.AuthenticationRequest;
+import com.example.shaden.features.authentication.request.RegisterRequest;
+import com.example.shaden.features.authentication.response.AuthenticationResponse;
 
 
 @ExtendWith(MockitoExtension.class)

@@ -1,4 +1,4 @@
-package com.example.shaden.features.authentication;
+package com.example.shaden.features.authentication.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
