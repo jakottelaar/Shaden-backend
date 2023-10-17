@@ -54,8 +54,8 @@ public class AuthenticationService {
 
         UserPrincipal userPrincipal = UserPrincipal.builder().user(user).build();
 
-        var jwtToken = jwtService.generateToken(userPrincipal);
-        var refreshToken = jwtService.generateRefreshToken(userPrincipal);
+        var jwtToken = jwtService.generateToken(userPrincipal, Optional.of(user));
+        var refreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user));
         return AuthenticationResponse
         .builder()
         .accessToken(jwtToken)
@@ -80,8 +80,8 @@ public class AuthenticationService {
 
         UserPrincipal userPrincipal = UserPrincipal.builder().user(user.get()).build();
 
-        var jwtToken = jwtService.generateToken(Optional.of(userPrincipal).get());
-        var refreshToken = jwtService.generateRefreshToken(Optional.of(userPrincipal).get());
+        var jwtToken = jwtService.generateToken(userPrincipal, Optional.of(user.get()));
+        var refreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user.get()));
         return AuthenticationResponse
         .builder()
         .accessToken(jwtToken)
@@ -93,24 +93,24 @@ public class AuthenticationService {
         LOGGER.info("Refreshing token");
         final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
-        final String userEmail;
+        final Long userId;
     
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             throw new ResourceNotFoundException("No authorization header or refresh token");
         }
     
         refreshToken = authorizationHeader.substring(7);
-        userEmail = jwtService.extractEmail(refreshToken);
+        userId = jwtService.extractUserId(refreshToken);
     
-        if (userEmail != null) {
-            var user = this.repository.findByEmail(userEmail)
+        if (userId != null) {
+            var user = this.repository.findById(userId)
                     .orElseThrow();
 
             UserPrincipal userPrincipal = UserPrincipal.builder().user(user).build();
 
             if (jwtService.isTokenValid(refreshToken, userPrincipal)) {
-                var accessToken = jwtService.generateToken(userPrincipal);
-                var newRefreshToken = jwtService.generateRefreshToken(userPrincipal);
+                var accessToken = jwtService.generateToken(userPrincipal, Optional.of(user));
+                var newRefreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user));
                 
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)

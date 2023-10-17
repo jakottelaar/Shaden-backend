@@ -4,11 +4,14 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.example.shaden.features.user.User;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -31,7 +34,15 @@ public class JwtService {
         try {
             return extractClaim(token, Claims::getSubject);
         } catch (MalformedJwtException e) {
-            return null; 
+            throw new MalformedJwtException("Error extracting email from token");
+        }
+    }
+
+    public Long extractUserId(String token) {
+        try {
+            return extractClaim(token, claims -> claims.get("userId", Long.class));
+        } catch (MalformedJwtException e) {
+            throw new MalformedJwtException("Error extracting email from token");
         }
     }
 
@@ -40,27 +51,23 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(UserDetails userDetails, Optional<User> user) {
+        return generateTokenWithCustomClaims(new HashMap<>(), userDetails, user);
     }
 
-    public String generateToken(
-        Map<String, Object> extraClaims,
-        UserDetails userDetails
-    ) {
-        return buildToken(extraClaims, userDetails, jwtExpiration);
+    public String generateTokenWithCustomClaims( Map<String, Object> extraClaims, UserDetails userDetails, Optional<User> user) {
+        return buildToken(extraClaims, userDetails, jwtExpiration, user);
     }
 
-    public String generateRefreshToken(
-        UserDetails userDetails
-    ) {
-        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
+    public String generateRefreshToken(UserDetails userDetails, Optional<User> user) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration, user);
     }
 
-    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration, Optional<User> user) {
         return Jwts
         .builder()
         .setClaims(extraClaims)
+        .claim("userId", user.map(User::getId).orElse(null))
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date(System.currentTimeMillis()))
         .setExpiration(new Date(System.currentTimeMillis() + expiration))

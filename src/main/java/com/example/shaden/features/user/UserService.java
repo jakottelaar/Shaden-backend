@@ -18,12 +18,12 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public Optional<UserProfileResponse> getProfile() {
+    public Optional<UserProfileResponse> getUserProfile() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 
         if (auth != null && auth.isAuthenticated()) {
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            Optional<User> user = userRepository.findByEmail(userDetails.getUsername());        
+            Optional<User> user = userRepository.findById(userPrincipal.getUserId());
             if (user.isPresent()) {
                 UserProfileResponse response = UserProfileResponse.builder()
                 .email(user.get().getEmail())
@@ -43,13 +43,12 @@ public class UserService {
         userRepository.delete(userToDelete);
     }
 
-    public void deleteUserWithEmail() {
-
+    public void deleteUserWithTokenId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 
         if (auth != null && auth.isAuthenticated()) {
-            UserDetails userDetails = (UserDetails) auth.getPrincipal();
-            Optional<User> user = userRepository.findByEmail(userDetails.getUsername());        
+            Optional<User> user = userRepository.findById(userPrincipal.getUserId());
             if (user.isPresent()) {
                 userRepository.delete(user.get());
                 return;

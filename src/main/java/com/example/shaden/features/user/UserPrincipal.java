@@ -59,5 +59,9 @@ public class UserPrincipal implements UserDetails, CredentialsContainer {
         user.setPassword(null);
     }
 
+    public Long getUserId() {
+        return user.getId();
+    }
+
     
 }
