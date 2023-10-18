@@ -115,6 +115,8 @@ public class AuthenticationService {
                 var accessToken = jwtService.generateToken(userPrincipal, Optional.of(user));
                 var newRefreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user));
                 
+                LOGGER.info("Token refreshed successfully");
+
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(newRefreshToken)
