@@ -86,4 +86,13 @@ public class ControllerExceptionHandler {
         error.setMessage("Authentication failed");
         return error;
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorMessage handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorMessage error = new ErrorMessage();
+        error.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        error.setMessage(ex.getMessage());
+        return error;
+    }
 }
