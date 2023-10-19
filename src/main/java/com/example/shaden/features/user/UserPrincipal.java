@@ -63,5 +63,9 @@ public class UserPrincipal implements UserDetails, CredentialsContainer {
         return user.getId();
     }
 
+    public User getUser() {
+        return user;
+    }
+
     
 }
