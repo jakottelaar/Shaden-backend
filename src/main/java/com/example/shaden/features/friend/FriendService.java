@@ -67,5 +67,20 @@ public class FriendService {
         return friendResponses;
     }
 
+    public FriendResponse getFriendById(Long friendId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+    
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+    
+        Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+    
+        if (friendship == null) {
+            throw new ResourceNotFoundException("Friendship not found");
+        }
+    
+        return new FriendResponse(friend.getId(), friend.getUsername());
+    }
 
 }

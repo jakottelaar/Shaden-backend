@@ -40,4 +40,14 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
+    @GetMapping("/list/{friendId}")
+    public ResponseEntity<ResponseData> getFriendById(@PathVariable Long friendId) {
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("Friend retrieved successfully");
+        responseData.setResults(friendService.getFriendById(friendId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
 }
