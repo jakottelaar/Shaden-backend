@@ -30,4 +30,14 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseData);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<ResponseData> getAllFriends() {
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("Friends retrieved successfully");
+        responseData.setResults(friendService.getAllFriends());
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
 }
