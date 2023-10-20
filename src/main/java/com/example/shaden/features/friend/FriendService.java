@@ -71,17 +71,27 @@ public class FriendService {
     }
 
     public FriendResponse getFriendById(Long friendId) {
-        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
     
-        Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+        Friendship friendship = friendRepository.findFriendByOrId(user.getUser(), friendId);
     
         if (friendship == null) {
             throw new ResourceNotFoundException("Friendship not found");
+        }
+        
+        switch (friendship.getStatus()) {
+            case PENDING:
+                throw new IllegalArgumentException("Friendship is pending");
+            case REJECTED:
+                throw new IllegalArgumentException("Friendship is rejected");
+            case BLOCKED:
+                throw new IllegalArgumentException("Friendship is blocked");
+            default:
+                break;
         }
     
         return new FriendResponse(friend.getId(), friend.getUsername());
