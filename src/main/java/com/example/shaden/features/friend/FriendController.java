@@ -84,4 +84,15 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
+    @PatchMapping("/{friendId}/reject")
+    public ResponseEntity<ResponseData> rejectFriend(@PathVariable Long friendId) {
+        friendService.rejectFriend(friendId);
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("Friend rejected successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
 }
