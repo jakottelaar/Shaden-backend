@@ -23,6 +23,7 @@ public class FriendService {
     private final UserRepository userRepository;
 
     public void addFriend(Long friendId) {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
@@ -36,7 +37,7 @@ public class FriendService {
         Friendship existingFriendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
     
         if (existingFriendship != null) {
-            throw new IllegalArgumentException("Friendship already established.");
+            throw new IllegalArgumentException("Friendship already exists");
         }
     
         if (auth != null && auth.isAuthenticated()) {
@@ -51,6 +52,7 @@ public class FriendService {
     }
 
     public List<FriendResponse> getAllFriends() {
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
 
@@ -68,6 +70,7 @@ public class FriendService {
     }
 
     public FriendResponse getFriendById(Long friendId) {
+        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
@@ -81,6 +84,23 @@ public class FriendService {
         }
     
         return new FriendResponse(friend.getId(), friend.getUsername());
+    }
+
+    public void removeFriend(Long friendId) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+    
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+    
+        Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+    
+        if (friendship == null) {
+            throw new ResourceNotFoundException("Friendship not found");
+        }
+        
+        friendRepository.delete(friendship);
     }
 
 }

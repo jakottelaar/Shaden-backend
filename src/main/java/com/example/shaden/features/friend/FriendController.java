@@ -2,6 +2,7 @@ package com.example.shaden.features.friend;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,12 +41,23 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
-    @GetMapping("/list/{friendId}")
+    @GetMapping("/{friendId}")
     public ResponseEntity<ResponseData> getFriendById(@PathVariable Long friendId) {
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("Friend retrieved successfully");
         responseData.setResults(friendService.getFriendById(friendId));
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity<ResponseData> removeFriend(@PathVariable Long friendId) {
+        friendService.removeFriend(friendId);
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.NO_CONTENT.value());
+        responseData.setMessage("Friend deleted successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
