@@ -20,4 +20,6 @@ public interface FriendRepository extends JpaRepository<Friendship, Long>{
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Friendship f SET f.status = ?2 WHERE f.id = ?1")
     void updateFriendShipStatus(Long id, FriendshipStatus status);
+
+    List<Friendship> findAllByFriend1AndStatus(User user, FriendshipStatus pending);
 }

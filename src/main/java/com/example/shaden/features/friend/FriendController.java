@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +59,27 @@ public class FriendController {
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.NO_CONTENT.value());
         responseData.setMessage("Friend deleted successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<ResponseData> getPendingFriendRequests() {
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("Pending friend requests retrieved successfully");
+        responseData.setResults(friendService.getPendingFriendRequests());
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
+    @PatchMapping("/{friendId}/accept")
+    public ResponseEntity<ResponseData> acceptFriend(@PathVariable Long friendId) {
+        friendService.acceptFriend(friendId);
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("Friend accepted successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
 import com.example.shaden.features.friend.response.FriendResponse;
+import com.example.shaden.features.friend.response.PendingFriendRequestResponse;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserPrincipal;
 import com.example.shaden.features.user.UserRepository;
@@ -101,6 +102,43 @@ public class FriendService {
         }
         
         friendRepository.delete(friendship);
+    }
+
+    public void acceptFriend(Long friendId) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+    
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+    
+        Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+    
+        if (friendship == null) {
+            throw new ResourceNotFoundException("Friendship not found");
+        }
+    
+        friendRepository.updateFriendShipStatus(friendship.getId(), FriendshipStatus.ACCEPTED);
+
+    }
+
+    public List<PendingFriendRequestResponse> getPendingFriendRequests() {
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+    
+        List<Friendship> friendships = friendRepository.findAllByFriend1AndStatus(user.getUser(), FriendshipStatus.PENDING);
+        
+        List<PendingFriendRequestResponse> pendingFriendRequestResponses = friendships.stream()
+            .map(friendship -> {
+                User friend = friendship.getFriend1();
+    
+                return new PendingFriendRequestResponse(friendship.getId(), friend.getId(), friendship.getFriend2().getId() ,friend.getUsername(), friendship.getStatus().toString());
+            })
+            .collect(Collectors.toList());
+    
+        return pendingFriendRequestResponses;
+
     }
 
 }

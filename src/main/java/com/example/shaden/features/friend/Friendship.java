@@ -31,10 +31,12 @@ public class Friendship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //Friend one is the user who sent the friend request
     @ManyToOne
     @JoinColumn(name = "friend1_id", referencedColumnName = "user_id")
     private User friend1;
 
+    //Friend two is the user who received the friend request
     @ManyToOne
     @JoinColumn(name = "friend2_id", referencedColumnName = "user_id")
     private User friend2;
