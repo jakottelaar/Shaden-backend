@@ -56,17 +56,17 @@ public class FriendService {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
-
-        List<Friendship> friendships = friendRepository.findAllByFriend1OrFriend2(user.getUser(), user.getUser());
-
+    
+        List<Friendship> friendships = friendRepository.findAllFriendsByStatus(user.getUser(), FriendshipStatus.ACCEPTED);
+    
         List<FriendResponse> friendResponses = friendships.stream()
             .map(friendship -> {
                 User friend = friendship.getFriend1().equals(user.getUser()) ? friendship.getFriend2() : friendship.getFriend1();
-
+    
                 return new FriendResponse(friend.getId(), friend.getUsername());
             })
             .collect(Collectors.toList());
-
+    
         return friendResponses;
     }
 
