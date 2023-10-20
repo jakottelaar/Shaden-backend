@@ -13,19 +13,20 @@ import jakarta.transaction.Transactional;
 
 public interface FriendRepository extends JpaRepository<Friendship, Long>{
 
-    Friendship findByFriend1AndFriend2(User user, User friend);
-    
+    Friendship findBySenderAndReceiver(User sender, User receiver);
+
     @Transactional
     @Modifying(clearAutomatically = true)
     @Query("UPDATE Friendship f SET f.status = ?2 WHERE f.id = ?1")
     void updateFriendShipStatus(Long id, FriendshipStatus status);
 
-    List<Friendship> findAllByFriend1AndStatus(User user, FriendshipStatus pending);
+    List<Friendship> findAllBySenderAndStatus(User sender, FriendshipStatus pending);
 
-    @Query("SELECT f FROM Friendship f WHERE (f.friend1 = :user OR f.friend2 = :user) AND f.status = :status")
+    @Query("SELECT f FROM Friendship f WHERE (f.sender = :user OR f.receiver = :user) AND f.status = :status")
     List<Friendship> findAllFriendsByStatus(@Param("user") User user, @Param("status") FriendshipStatus status);
 
-    @Query("SELECT f FROM Friendship f WHERE (f.friend1 = :user OR f.friend2 = :user) AND (f.friend1.id = :friendId OR f.friend2.id = :friendId)")
+    @Query("SELECT f FROM Friendship f WHERE (f.sender = :user OR f.receiver = :user) AND (f.sender.id = :friendId OR f.receiver.id = :friendId)")
     Friendship findFriendByOrId(@Param("user") User user, @Param("friendId") Long friendId);
+
 
 }

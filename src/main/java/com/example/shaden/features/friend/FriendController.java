@@ -22,12 +22,12 @@ public class FriendController {
     private final FriendService friendService;
 
     @PostMapping("/add/{friendId}")
-    public ResponseEntity<ResponseData> addFriend(@PathVariable Long friendId) {
-        friendService.addFriend(friendId);
+    public ResponseEntity<ResponseData> sentFriendRequest(@PathVariable Long friendId) {
+        friendService.sentFriendRequest(friendId);
         
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.CREATED.value());
-        responseData.setMessage("Friend added successfully");
+        responseData.setMessage("Friend request sent successfully");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseData);
     }

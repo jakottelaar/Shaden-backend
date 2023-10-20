@@ -23,8 +23,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
-    public void addFriend(Long friendId) {
-
+    public void sentFriendRequest(Long friendId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
@@ -33,22 +32,34 @@ public class FriendService {
         }
     
         User friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+            .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
     
-        Friendship existingFriendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+        Friendship existingFriendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
     
         if (existingFriendship != null) {
-            throw new IllegalArgumentException("Friendship already exists");
-        }
-    
-        if (auth != null && auth.isAuthenticated()) {
-            Friendship newFriendship = Friendship.builder()
-                    .friend1(user.getUser())
-                    .friend2(friend)
-                    .status(FriendshipStatus.PENDING)
-                    .build();
-    
-            friendRepository.save(newFriendship);
+            switch (existingFriendship.getStatus()) {
+                case ACCEPTED:
+                    throw new IllegalArgumentException("Friendship already exists");
+                case PENDING:
+                    throw new IllegalArgumentException("Friendship is pending");
+                case REJECTED:
+                    friendRepository.updateFriendShipStatus(existingFriendship.getId(), FriendshipStatus.PENDING);
+                    break;
+                case BLOCKED:
+                    throw new IllegalArgumentException("Friendship is blocked by a user");
+                default:
+                    break;
+            }
+        } else {
+            if (auth != null && auth.isAuthenticated()) {
+                Friendship newFriendship = Friendship.builder()
+                        .sender(user.getUser())
+                        .receiver(friend)
+                        .status(FriendshipStatus.PENDING)
+                        .build();
+        
+                friendRepository.save(newFriendship);
+            }
         }
     }
 
@@ -61,7 +72,7 @@ public class FriendService {
     
         List<FriendResponse> friendResponses = friendships.stream()
             .map(friendship -> {
-                User friend = friendship.getFriend1().equals(user.getUser()) ? friendship.getFriend2() : friendship.getFriend1();
+                User friend = friendship.getSender().equals(user.getUser()) ? friendship.getReceiver() : friendship.getSender();
     
                 return new FriendResponse(friend.getId(), friend.getUsername());
             })
@@ -105,7 +116,7 @@ public class FriendService {
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
     
-        Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+        Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
     
         if (friendship == null) {
             throw new ResourceNotFoundException("Friendship not found");
@@ -122,7 +133,7 @@ public class FriendService {
         User friend = userRepository.findById(friendId)
                 .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
     
-        Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+        Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
     
         if (friendship == null) {
             throw new ResourceNotFoundException("Friendship not found");
@@ -137,13 +148,13 @@ public class FriendService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
-        List<Friendship> friendships = friendRepository.findAllByFriend1AndStatus(user.getUser(), FriendshipStatus.PENDING);
+        List<Friendship> friendships = friendRepository.findAllBySenderAndStatus(user.getUser(), FriendshipStatus.PENDING);
         
         List<PendingFriendRequestResponse> pendingFriendRequestResponses = friendships.stream()
             .map(friendship -> {
-                User friend = friendship.getFriend1();
+                User friend = friendship.getSender();
     
-                return new PendingFriendRequestResponse(friendship.getId(), friend.getId(), friendship.getFriend2().getId() ,friend.getUsername(), friendship.getStatus().toString());
+                return new PendingFriendRequestResponse(friendship.getId(), friend.getId(), friendship.getReceiver().getId() ,friend.getUsername(), friendship.getStatus().toString());
             })
             .collect(Collectors.toList());
     
@@ -159,10 +170,23 @@ public class FriendService {
             User friend = userRepository.findById(friendId)
                     .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
         
-            Friendship friendship = friendRepository.findByFriend1AndFriend2(user.getUser(), friend);
+            Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
         
             if (friendship == null) {
                 throw new ResourceNotFoundException("Friendship not found");
+            }
+
+            switch (friendship.getStatus()) {
+                case PENDING:
+                    break;
+                case REJECTED:
+                    throw new IllegalArgumentException("Friendship is already rejected");
+                case ACCEPTED:
+                    throw new IllegalArgumentException("Friendship is already accepted");
+                case BLOCKED:
+                    throw new IllegalArgumentException("Friendship is blocked");
+                default:
+                    break;
             }
         
             friendRepository.updateFriendShipStatus(friendship.getId(), FriendshipStatus.REJECTED);

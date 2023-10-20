@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "friendship", uniqueConstraints = {
-    @UniqueConstraint(columnNames = {"friend1_id", "friend2_id"})
+    @UniqueConstraint(columnNames = {"sender_id", "receiver_id"})
 })
 public class Friendship {
 
@@ -31,17 +31,14 @@ public class Friendship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    //Friend one is the user who sent the friend request
     @ManyToOne
-    @JoinColumn(name = "friend1_id", referencedColumnName = "user_id")
-    private User friend1;
+    @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
+    private User sender;
 
-    //Friend two is the user who received the friend request
     @ManyToOne
-    @JoinColumn(name = "friend2_id", referencedColumnName = "user_id")
-    private User friend2;
+    @JoinColumn(name = "receiver_id", referencedColumnName = "user_id")
+    private User receiver;
 
     @Enumerated(EnumType.STRING)
     private FriendshipStatus status;
-
 }
