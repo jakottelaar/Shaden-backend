@@ -128,12 +128,12 @@ public class FriendService {
     public void acceptFriend(Long friendId) {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+        UserPrincipal sender = (UserPrincipal) auth.getPrincipal();
     
-        User friend = userRepository.findById(friendId)
+        User receiver = userRepository.findById(friendId)
                 .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
     
-        Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
+        Friendship friendship = friendRepository.findBySenderAndReceiver(receiver, sender.getUser());
     
         if (friendship == null) {
             throw new ResourceNotFoundException("Friendship not found");

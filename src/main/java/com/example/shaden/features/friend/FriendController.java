@@ -58,9 +58,9 @@ public class FriendController {
 
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.NO_CONTENT.value());
-        responseData.setMessage("Friend deleted successfully");
+        responseData.setMessage("Friend removed successfully");
 
-        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
     }
 
     @GetMapping("/pending")
@@ -79,7 +79,7 @@ public class FriendController {
 
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.OK.value());
-        responseData.setMessage("Friend accepted successfully");
+        responseData.setMessage("Friend request accepted successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
