@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import com.example.shaden.features.ResponseData;
 import com.example.shaden.features.friend.FriendController;
 import com.example.shaden.features.friend.FriendService;
+import com.example.shaden.features.friend.FriendshipStatus;
 import com.example.shaden.features.friend.response.FriendResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -62,7 +63,7 @@ public class FriendControllerUnitTests {
     @Test
     public void testGetFriendByIdEndpoint() {
         Long friendId = 1L;
-        FriendResponse friendResponse = new FriendResponse(friendId, "TestFriend");
+        FriendResponse friendResponse = new FriendResponse(friendId, "TestFriend", FriendshipStatus.ACCEPTED);
 
         Mockito.when(friendService.getFriendById(friendId)).thenReturn(friendResponse);
 

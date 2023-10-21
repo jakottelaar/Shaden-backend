@@ -22,6 +22,7 @@ import com.example.shaden.config.JsonParserUtil;
 import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
+import com.example.shaden.features.friend.FriendshipStatus;
 import com.example.shaden.features.user.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -127,9 +128,49 @@ public class FriendIntegrationTests {
 
     }
 
-    //User 1 removes friend 2
+    //User 1 fetches friends list and assert it only contains accepted friends
     @Test
     @Order(3)
+    public void testFriend1FetchesFriendsList() throws Exception {
+        String uri = "/api/friends/list";
+
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                .header("Authorization", "Bearer " + testFriendUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        LOGGER.info("jsonResponse: " + jsonResponse.toString());
+        
+        assert(jsonResponse.get("status").asInt() == 200);
+        assert(jsonResponse.get("message").asText().contains("Friends retrieved successfully"));
+        assert(jsonResponse.get("results").get(0).get("status").asText().equals(FriendshipStatus.ACCEPTED.toString()));
+
+    }
+
+    //User 1 fetches friend 2 by id and asserts the friendship is accepted
+    @Test
+    @Order(4)
+    public void testFriend1FetchesFriendById() throws Exception {
+        String uri = "/api/friends/" + testFriendId2;
+
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                .header("Authorization", "Bearer " + testFriendUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("status").asInt() == 200);
+        assert(jsonResponse.get("message").asText().contains("Friend retrieved successfully"));
+        assert(jsonResponse.get("results").get("status").asText().equals(FriendshipStatus.ACCEPTED.toString()));
+
+    }
+
+    //User 1 removes friend 2
+    @Test
+    @Order(5)
     public void testFriend1RemovesFriend2() throws Exception {
 
         String uri = "/api/friends/" + testFriendId2;
@@ -145,23 +186,5 @@ public class FriendIntegrationTests {
         assert(jsonResponse.get("message").asText().contains("Friend removed successfully"));
 
     }
-
-    @Test
-    @Order(4)
-    public void testFriend1FetchesFriendsList() throws Exception {
-        String uri = "/api/friends/list";
-
-        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.get(uri)
-                .header("Authorization", "Bearer " + testFriendUserToken1)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).andReturn();
-
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friends retrieved successfully"));
-
-    }
-
 
 }
