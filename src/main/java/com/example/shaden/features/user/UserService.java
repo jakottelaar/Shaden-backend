@@ -1,5 +1,6 @@
 package com.example.shaden.features.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
 import com.example.shaden.features.user.request.UserProfileUpdateRequest;
+import com.example.shaden.features.user.response.SearchUserResponse;
 import com.example.shaden.features.user.response.UserProfileResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -90,6 +92,11 @@ public class UserService {
         } else {
             throw new ResourceNotFoundException("User not found");
         }
+    }
+
+    public List<SearchUserResponse> searchUsers(String username) {
+        List<SearchUserResponse> searchUserResponse = userRepository.findByUsernameContaining(username);
+        return searchUserResponse;
     }
     
 
