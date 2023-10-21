@@ -27,6 +27,7 @@ public class AuthIntegrationTest {
     private static String accessToken;
     private static String refreshToken;
 
+    //Test account registration
     @Test
     @Order(1)
     public void accountRegistrationTest() throws Exception {
@@ -45,6 +46,7 @@ public class AuthIntegrationTest {
         assert(jsonResponse.get("results").get("refresh_token").asText() != null);
     }
 
+    //Test invalid input for account registration
     @Test
     @Order(2)
     public void invalidInputAccountRegistration() throws Exception {
@@ -63,6 +65,7 @@ public class AuthIntegrationTest {
         assert(jsonResponse.get("errors").toString().contains("Password must contain at least one letter, one digit, and be 8 or more characters long"));
     }
 
+    //Test account registration with email that already exists
     @Test
     @Order(3)
     public void accountWithEmailAlreadyExists() throws Exception {
@@ -76,7 +79,8 @@ public class AuthIntegrationTest {
         JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
         assert(jsonResponse.get("message").asText().contains("Email already exists"));
     }
-   
+    
+    //Test login
     @Test
     @Order(4)
     public void testLogin() throws Exception {
@@ -98,6 +102,7 @@ public class AuthIntegrationTest {
         refreshToken = jsonResponse.get("results").get("refresh_token").asText();
     }
 
+    //Test invalid credentials login
     @Test
     @Order(5)
     public void testInvalidCredentialsLogin() throws Exception {
@@ -118,6 +123,7 @@ public class AuthIntegrationTest {
 
     }
 
+    //Test refresh token
     @Test
     @Order(6)
     public void testRefreshToken() throws Exception {
@@ -136,7 +142,7 @@ public class AuthIntegrationTest {
 
     }
 
-
+    //Test delete registered user
     @Test
     @Order(7)
     public void deleteRegisteredUser() throws Exception {
