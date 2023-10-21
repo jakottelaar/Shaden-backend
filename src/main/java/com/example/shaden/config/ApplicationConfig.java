@@ -2,19 +2,16 @@ package com.example.shaden.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.example.shaden.features.user.UserRepository;
-import com.example.shaden.features.user.User;
-import com.example.shaden.features.user.UserPrincipal;
-
+import com.example.shaden.features.authentication.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -24,18 +21,15 @@ public class ApplicationConfig {
     private final UserRepository repository;
 
     @Bean
-    UserDetailsService userDetailsService() {
-        return username -> {
-            User user = repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-            return new UserPrincipal(user);
-        };
+    @Primary
+    CustomUserDetailsService myCustomUserDetailsService() {
+        return new CustomUserDetailsService(repository);
     }
 
     @Bean 
     AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
+        authProvider.setUserDetailsService(myCustomUserDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }

@@ -7,13 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.example.shaden.features.authentication.CustomUserDetailsService;
 import com.example.shaden.features.authentication.JwtService;
+import com.example.shaden.features.user.UserPrincipal;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.micrometer.common.lang.NonNull;
@@ -28,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class JwtAuthenticationFilter extends OncePerRequestFilter{
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     @Override
@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
             
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String username;
+        final Long userId;
         
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -48,11 +48,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         }
         jwt = authHeader.substring(7);
         try {
-            username = jwtService.extractEmail(jwt);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-                if (jwtService.isTokenValid(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            userId = jwtService.extractUserId(jwt);
+            if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserPrincipal userPrincipal = this.userDetailsService.loadUserById(userId);
+                if (jwtService.isTokenValid(jwt, userPrincipal)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
                     authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                     );
