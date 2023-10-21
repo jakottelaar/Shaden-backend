@@ -74,7 +74,7 @@ public class FriendService {
             .map(friendship -> {
                 User friend = friendship.getSender().equals(user.getUser()) ? friendship.getReceiver() : friendship.getSender();
     
-                return new FriendResponse(friend.getId(), friend.getUsername());
+                return new FriendResponse(friend.getId(), friend.getUsername(), friendship.getStatus());
             })
             .collect(Collectors.toList());
     
@@ -105,7 +105,7 @@ public class FriendService {
                 break;
         }
     
-        return new FriendResponse(friend.getId(), friend.getUsername());
+        return new FriendResponse(friend.getId(), friend.getUsername(), friendship.getStatus());
     }
 
     public void removeFriend(Long friendId) {
