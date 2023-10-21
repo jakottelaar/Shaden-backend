@@ -146,7 +146,7 @@ public class AuthIntegrationTest {
     @Test
     @Order(7)
     public void deleteRegisteredUser() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/delete-account")
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/profile")
                 .header("Authorization", "Bearer " + accessToken)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())

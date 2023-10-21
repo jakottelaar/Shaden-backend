@@ -54,7 +54,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
     }
 
-    @DeleteMapping("/delete-account")
+    @DeleteMapping("/profile")
     public ResponseEntity<ResponseData> deleteUserWithTokenId() {
         LOGGER.info("Delete user endpoint called");
         userService.deleteUserWithTokenId();
