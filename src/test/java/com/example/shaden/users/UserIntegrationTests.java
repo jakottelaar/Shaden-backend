@@ -59,7 +59,7 @@ public class UserIntegrationTests {
 
     @AfterAll
     public void teardown() throws Exception {
-        userRepository.deleteById(userRepository.findByEmail("testuser2@mail.com").get().getId());
+        userRepository.deleteAll();
     }
 
     @Test

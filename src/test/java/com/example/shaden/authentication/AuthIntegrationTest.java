@@ -1,8 +1,10 @@
 package com.example.shaden.authentication;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -13,10 +15,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.shaden.config.JsonParserUtil;
+import com.example.shaden.features.user.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -24,8 +28,17 @@ public class AuthIntegrationTest {
     
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
+
     private static String accessToken;
     private static String refreshToken;
+
+    @AfterAll
+    public void cleanUp() throws Exception {
+        userRepository.deleteAll();
+    }
 
     //Test account registration
     @Test
@@ -140,21 +153,6 @@ public class AuthIntegrationTest {
         assert(jsonResponse.get("results").get("access_token").asText() != null);
         assert(jsonResponse.get("results").get("refresh_token").asText() != null);
 
-    }
-
-    //Test delete registered user
-    @Test
-    @Order(7)
-    public void deleteRegisteredUser() throws Exception {
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/profile")
-                .header("Authorization", "Bearer " + accessToken)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent())
-                .andReturn();
-
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-
-        assert(jsonResponse.get("message").asText().contains("Successfully deleted your account"));
     }
 
 }

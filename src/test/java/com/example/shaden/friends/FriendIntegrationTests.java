@@ -77,9 +77,7 @@ public class FriendIntegrationTests {
 
     @AfterAll
     public void cleanup() {
-        userRepository.deleteById(testFriendId1);
-        userRepository.deleteById(testFriendId2);
-        userRepository.deleteById(testFriendId3);
+        userRepository.deleteAll();
     }
 
     private String obtainAccessToken(String username, String password) throws Exception {
