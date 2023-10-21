@@ -9,11 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shaden.features.ResponseData;
+import com.example.shaden.features.user.request.UserProfileUpdateRequest;
 import com.example.shaden.features.user.response.UserProfileResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -61,6 +64,19 @@ public class UserController {
         responseBody.setMessage("Successfully deleted your account");
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<ResponseData> updateUserProfile(@RequestBody UserProfileUpdateRequest updateRequest) {
+        LOGGER.info("Update user profile endpoint called");
+        Optional<UserProfileResponse> userProfileResponse = userService.updateUserProfile(updateRequest);
+
+        ResponseData responseBody = new ResponseData();
+        responseBody.setStatusCode(HttpStatus.OK.value());
+        responseBody.setMessage("Successfully updated user profile");
+        responseBody.setResults(userProfileResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
 }

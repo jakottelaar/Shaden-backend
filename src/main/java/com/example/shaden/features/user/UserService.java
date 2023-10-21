@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
+import com.example.shaden.features.user.request.UserProfileUpdateRequest;
 import com.example.shaden.features.user.response.UserProfileResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -57,5 +58,39 @@ public class UserService {
         throw new ResourceNotFoundException("User not found");
 
     }
+
+    public Optional<UserProfileResponse> updateUserProfile(UserProfileUpdateRequest updateRequest) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+    
+        Optional<User> userOptional = userRepository.findById(userPrincipal.getUserId());
+
+        if (userRepository.existsByEmail(updateRequest.getEmail().get()) && !userOptional.get().getEmail().equals(updateRequest.getEmail().get())) {
+            throw new ResourceNotFoundException("Email already exists");
+        }
+
+        if (userRepository.existsByUsername(updateRequest.getUsername().get()) && !userOptional.get().getUsername().equals(updateRequest.getUsername().get())) {
+            throw new ResourceNotFoundException("Username already exists");
+        }
+    
+        if (userOptional.isPresent() ) {
+            User user = userOptional.get();
+            updateRequest.getUsername().ifPresent(user::setUsername);
+            updateRequest.getEmail().ifPresent(user::setEmail);
+
+            userRepository.save(user);
+
+            UserProfileResponse userProfileResponse = UserProfileResponse.builder()
+                    .email(user.getEmail())
+                    .username(user.getUsername())
+                    .build();
+    
+            return Optional.of(userProfileResponse);
+        } else {
+            throw new ResourceNotFoundException("User not found");
+        }
+    }
+    
 
 }
