@@ -146,5 +146,22 @@ public class FriendIntegrationTests {
 
     }
 
+    @Test
+    @Order(4)
+    public void testFriend1FetchesFriendsList() throws Exception {
+        String uri = "/api/friends/list";
+
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                .header("Authorization", "Bearer " + testFriendUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("status").asInt() == 200);
+        assert(jsonResponse.get("message").asText().contains("Friends retrieved successfully"));
+
+    }
+
 
 }
