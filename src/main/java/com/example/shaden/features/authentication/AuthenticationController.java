@@ -47,7 +47,7 @@ public class AuthenticationController {
         AuthenticationResponse response = authService.authenticate(request);
 
         ResponseData responseData = new ResponseData();
-        responseData.setStatusCode(HttpStatus.CREATED.value());
+        responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("User authenticated successfully");
         responseData.setResults(response);
 
@@ -58,7 +58,7 @@ public class AuthenticationController {
     public ResponseEntity<ResponseData> refreshToken(HttpServletRequest request) throws IOException {
         AuthenticationResponse response = authService.refreshToken(request);
         ResponseData responseData = new ResponseData();
-        responseData.setStatusCode(HttpStatus.CREATED.value());
+        responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("Token refreshed successfully");
         responseData.setResults(response);
 
