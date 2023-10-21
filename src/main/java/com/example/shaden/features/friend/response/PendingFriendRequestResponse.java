@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 public class PendingFriendRequestResponse {
     
     private Long requestId;    
-    private Long userId;
-    private Long friendId;
+    private Long friendId; // Combined sender and receiver into a single 'friendId'
     private String friendUsername;
     private String status;
-
+    private String requestType;
+    
 }

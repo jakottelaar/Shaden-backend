@@ -1,5 +1,6 @@
 package com.example.shaden.features.friend;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -126,42 +127,58 @@ public class FriendService {
     }
 
     public void acceptFriend(Long friendId) {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal sender = (UserPrincipal) auth.getPrincipal();
+        UserPrincipal currentUser = (UserPrincipal) auth.getPrincipal();
     
         User receiver = userRepository.findById(friendId)
                 .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
     
-        Friendship friendship = friendRepository.findBySenderAndReceiver(receiver, sender.getUser());
+        Friendship outgoingFriendship = friendRepository.findBySenderAndReceiver(currentUser.getUser(), receiver);
+        Friendship incomingFriendship = friendRepository.findBySenderAndReceiver(receiver, currentUser.getUser());
     
-        if (friendship == null) {
+        if (outgoingFriendship != null) {
+            acceptFriendship(outgoingFriendship, currentUser);
+        } else if (incomingFriendship != null) {
+            acceptFriendship(incomingFriendship, currentUser);
+        } else {
             throw new ResourceNotFoundException("Friendship not found");
+        }
+    }
+    
+    private void acceptFriendship(Friendship friendship, UserPrincipal currentUser) {
+        if (friendship.getSender().equals(currentUser.getUser())) {
+            throw new IllegalArgumentException("Sender cannot accept their own friend request");
         }
     
         friendRepository.updateFriendShipStatus(friendship.getId(), FriendshipStatus.ACCEPTED);
-
     }
 
     public List<PendingFriendRequestResponse> getPendingFriendRequests() {
-        
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
     
-        List<Friendship> friendships = friendRepository.findAllBySenderAndStatus(user.getUser(), FriendshipStatus.PENDING);
-        
+        List<Friendship> friendships = friendRepository.findAllBySenderAndStatusOrReceiverAndStatus(
+            userPrincipal.getUser(), FriendshipStatus.PENDING, userPrincipal.getUser(), FriendshipStatus.PENDING);
+    
         List<PendingFriendRequestResponse> pendingFriendRequestResponses = friendships.stream()
             .map(friendship -> {
-                User friend = friendship.getSender();
+                User friend = (friendship.getSender().equals(userPrincipal.getUser())) ? friendship.getReceiver() : friendship.getSender();
+                String requestType = (friendship.getSender().equals(userPrincipal.getUser())) ? "OUTGOING" : "INCOMING";
     
-                return new PendingFriendRequestResponse(friendship.getId(), friend.getId(), friendship.getReceiver().getId() ,friend.getUsername(), friendship.getStatus().toString());
+                return PendingFriendRequestResponse.builder()
+                    .requestId(friendship.getId())
+                    .friendId(friend.getId())
+                    .friendUsername(friend.getUsername())
+                    .status(friendship.getStatus().toString())
+                    .requestType(requestType)
+                    .build();
             })
             .collect(Collectors.toList());
     
         return pendingFriendRequestResponses;
-
     }
-
+    
+    
     public void rejectFriend(Long friendId) {
             
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -170,7 +187,7 @@ public class FriendService {
             User friend = userRepository.findById(friendId)
                     .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
         
-            Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
+            Friendship friendship = friendRepository.findBySenderAndReceiver(friend, user.getUser());
         
             if (friendship == null) {
                 throw new ResourceNotFoundException("Friendship not found");

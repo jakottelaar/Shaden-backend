@@ -90,7 +90,7 @@ public class FriendController {
 
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.OK.value());
-        responseData.setMessage("Friend rejected successfully");
+        responseData.setMessage("Friend request rejected successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
