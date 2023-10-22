@@ -108,23 +108,6 @@ public class FriendService {
         return new FriendResponse(friend.getId(), friend.getUsername(), friendship.getStatus());
     }
 
-    public void removeFriend(Long friendId) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
-    
-        User friend = userRepository.findById(friendId)
-                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
-    
-        Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
-    
-        if (friendship == null) {
-            throw new ResourceNotFoundException("Friendship not found");
-        }
-        
-        friendRepository.delete(friendship);
-    }
-
     public void acceptFriend(Long friendId) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal currentUser = (UserPrincipal) auth.getPrincipal();
@@ -206,6 +189,23 @@ public class FriendService {
             }
         
             friendRepository.updateFriendShipStatus(friendship.getId(), FriendshipStatus.REJECTED);
+    }
+
+    public void removeFriend(Long friendId) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+    
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+    
+        Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
+    
+        if (friendship == null) {
+            throw new ResourceNotFoundException("Friendship not found");
+        }
+        
+        friendRepository.delete(friendship);
     }
 
 }

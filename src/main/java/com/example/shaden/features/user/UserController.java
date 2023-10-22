@@ -45,6 +45,33 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<ResponseData> searchUsers(@RequestParam(value = "username", required = false) String username) {
+        LOGGER.info("Search users endpoint called");
+        List<SearchUserResponse> searchUserResponse = userService.searchUsers(username);
+
+        ResponseData responseBody = new ResponseData();
+        responseBody.setStatusCode(HttpStatus.OK.value());
+        responseBody.setMessage("Successfully retrieved users");
+        responseBody.setResults(searchUserResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<ResponseData> updateUserProfile(@RequestBody UserProfileUpdateRequest updateRequest) {
+        LOGGER.info("Update user profile endpoint called");
+        Optional<UserProfileResponse> userProfileResponse = userService.updateUserProfile(updateRequest);
+
+        ResponseData responseBody = new ResponseData();
+        responseBody.setStatusCode(HttpStatus.OK.value());
+        responseBody.setMessage("Successfully updated user profile");
+        responseBody.setResults(userProfileResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    }
+
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<ResponseData> deleteUserWithId(@PathVariable(value = "id", required = false) Long userId) {
@@ -67,32 +94,6 @@ public class UserController {
         responseBody.setMessage("Successfully deleted your account");
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
-    }
-
-    @PatchMapping("/profile")
-    public ResponseEntity<ResponseData> updateUserProfile(@RequestBody UserProfileUpdateRequest updateRequest) {
-        LOGGER.info("Update user profile endpoint called");
-        Optional<UserProfileResponse> userProfileResponse = userService.updateUserProfile(updateRequest);
-
-        ResponseData responseBody = new ResponseData();
-        responseBody.setStatusCode(HttpStatus.OK.value());
-        responseBody.setMessage("Successfully updated user profile");
-        responseBody.setResults(userProfileResponse);
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<ResponseData> searchUsers(@RequestParam(value = "username", required = false) String username) {
-        LOGGER.info("Search users endpoint called");
-        List<SearchUserResponse> searchUserResponse = userService.searchUsers(username);
-
-        ResponseData responseBody = new ResponseData();
-        responseBody.setStatusCode(HttpStatus.OK.value());
-        responseBody.setMessage("Successfully retrieved users");
-        responseBody.setResults(searchUserResponse);
-
-        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
 }

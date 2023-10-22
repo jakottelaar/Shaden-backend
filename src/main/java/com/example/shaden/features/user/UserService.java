@@ -39,27 +39,17 @@ public class UserService {
         throw new ResourceNotFoundException("User not found");
     }
 
+    public List<SearchUserResponse> searchUsers(String username) {
+        List<SearchUserResponse> searchUserResponse = userRepository.findByUsernameContaining(username);
+        return searchUserResponse;
+    }
+    
     public void deleteUserWithId(Long userId) {
         User userToDelete = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
         userRepository.delete(userToDelete);
     }
 
-    public void deleteUserWithTokenId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
-
-        if (auth != null && auth.isAuthenticated()) {
-            Optional<User> user = userRepository.findById(userPrincipal.getUserId());
-            if (user.isPresent()) {
-                userRepository.delete(user.get());
-                return;
-            }
-        }
-        
-        throw new ResourceNotFoundException("User not found");
-
-    }
 
     public Optional<UserProfileResponse> updateUserProfile(UserProfileUpdateRequest updateRequest) {
 
@@ -94,10 +84,20 @@ public class UserService {
         }
     }
 
-    public List<SearchUserResponse> searchUsers(String username) {
-        List<SearchUserResponse> searchUserResponse = userRepository.findByUsernameContaining(username);
-        return searchUserResponse;
+    public void deleteUserWithTokenId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+
+        if (auth != null && auth.isAuthenticated()) {
+            Optional<User> user = userRepository.findById(userPrincipal.getUserId());
+            if (user.isPresent()) {
+                userRepository.delete(user.get());
+                return;
+            }
+        }
+        
+        throw new ResourceNotFoundException("User not found");
+
     }
-    
 
 }

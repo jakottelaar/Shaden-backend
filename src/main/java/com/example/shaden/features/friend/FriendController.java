@@ -52,17 +52,6 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
-    @DeleteMapping("/{friendId}")
-    public ResponseEntity<ResponseData> removeFriend(@PathVariable Long friendId) {
-        friendService.removeFriend(friendId);
-
-        ResponseData responseData = new ResponseData();
-        responseData.setStatusCode(HttpStatus.NO_CONTENT.value());
-        responseData.setMessage("Friend removed successfully");
-
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
-    }
-
     @GetMapping("/pending")
     public ResponseEntity<ResponseData> getPendingFriendRequests() {
         ResponseData responseData = new ResponseData();
@@ -93,6 +82,17 @@ public class FriendController {
         responseData.setMessage("Friend request rejected successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
+    @DeleteMapping("/{friendId}")
+    public ResponseEntity<ResponseData> removeFriend(@PathVariable Long friendId) {
+        friendService.removeFriend(friendId);
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.NO_CONTENT.value());
+        responseData.setMessage("Friend removed successfully");
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
     }
 
 }
