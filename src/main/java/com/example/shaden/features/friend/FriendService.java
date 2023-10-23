@@ -23,16 +23,19 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
-    public void sentFriendRequest(Long friendId) {
+    public void sentFriendRequest(String username) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
-        if (user.getUserId().equals(friendId)) {
+        if (user.getUsername().equals(username)) {
             throw new IllegalArgumentException("You cannot add yourself as a friend.");
         }
     
-        User friend = userRepository.findById(friendId)
-            .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+        User friend = userRepository.findByUsername(username);
+
+        if (friend == null) {
+            throw new ResourceNotFoundException("Friend not found");
+        }
     
         Friendship existingFriendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
     

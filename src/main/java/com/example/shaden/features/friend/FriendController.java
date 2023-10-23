@@ -21,9 +21,9 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/add/{friendId}")
-    public ResponseEntity<ResponseData> sentFriendRequest(@PathVariable Long friendId) {
-        friendService.sentFriendRequest(friendId);
+    @PostMapping("/add/{username}")
+    public ResponseEntity<ResponseData> sentFriendRequest(@PathVariable String username) {
+        friendService.sentFriendRequest(username);
         
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.CREATED.value());
