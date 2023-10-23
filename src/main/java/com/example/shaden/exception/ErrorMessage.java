@@ -13,7 +13,7 @@ import lombok.Data;
 @JsonInclude(JsonInclude.Include.NON_NULL) 
 public class ErrorMessage {
     
-    private int statusCode;
+    private int status;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private Date timestamp;

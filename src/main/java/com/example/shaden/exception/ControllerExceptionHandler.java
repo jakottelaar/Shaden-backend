@@ -23,7 +23,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage dataNotFoundHandler(Exception e) {
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.NOT_FOUND.value());
+        error.setStatus(HttpStatus.NOT_FOUND.value());
         error.setTimestamp(new Date());
         error.setMessage(e.getMessage());
         return error;
@@ -33,7 +33,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorMessage genericExceptionHandler(Exception e) {
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        error.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         error.setTimestamp(new Date());
         error.setMessage(e.getMessage());
         return error;
@@ -43,7 +43,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorMessage duplicateDataHandler(Exception e) {
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.CONFLICT.value());
+        error.setStatus(HttpStatus.CONFLICT.value());
         error.setTimestamp(new Date());
         error.setMessage(e.getMessage());
         return error;
@@ -53,7 +53,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorMessage unauthorizedHandler(Exception e) {
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        error.setStatus(HttpStatus.UNAUTHORIZED.value());
         error.setTimestamp(new Date());
         error.setMessage(e.getMessage());
         return error;
@@ -69,7 +69,7 @@ public class ControllerExceptionHandler {
                 .collect(Collectors.toList());
 
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.setTimestamp(new Date());
         error.setMessage("Validation failed");
         error.setErrors(validationErrors.isEmpty() ? null : Optional.of(validationErrors));
@@ -81,7 +81,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorMessage handleAuthenticationException(AuthenticationException e) {
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        error.setStatus(HttpStatus.UNAUTHORIZED.value());
         error.setTimestamp(new Date());
         error.setMessage("Authentication failed");
         return error;
@@ -91,7 +91,7 @@ public class ControllerExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorMessage handleIllegalArgumentException(IllegalArgumentException ex) {
         ErrorMessage error = new ErrorMessage();
-        error.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        error.setStatus(HttpStatus.BAD_REQUEST.value());
         error.setTimestamp(new Date());
         error.setMessage(ex.getMessage());
         return error;
