@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.shaden.features.ResponseData;
+import com.example.shaden.features.friend.request.FriendRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,10 +23,12 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/add/{username}")
-    public ResponseEntity<ResponseData> sentFriendRequest(@PathVariable String username) {
+    @PostMapping("/add")
+    public ResponseEntity<ResponseData> sentFriendRequest(@RequestBody FriendRequest friendRequest) {
+        String username = friendRequest.getUsername();
         friendService.sentFriendRequest(username);
-        
+        System.out.println(username);
+
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.CREATED.value());
         responseData.setMessage("Friend request sent successfully");

@@ -34,7 +34,7 @@ public class FriendService {
         User friend = userRepository.findByUsername(username);
 
         if (friend == null) {
-            throw new ResourceNotFoundException("Friend not found");
+            throw new ResourceNotFoundException("User not found");
         }
     
         Friendship existingFriendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
