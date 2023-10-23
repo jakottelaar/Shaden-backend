@@ -13,4 +13,13 @@ public class JsonParserUtil {
         return objectMapper.readTree(responseBody);
     }
 
+    public static String asJsonString(final Object obj) {
+        try {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

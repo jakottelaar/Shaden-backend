@@ -23,6 +23,7 @@ import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.friend.FriendshipStatus;
+import com.example.shaden.features.friend.request.FriendRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -95,10 +96,15 @@ public class FriendIntegrationTests {
     @Order(1)
     public void testSentFriendRequest() throws Exception {
 
-        String uri = "/api/friends/add/" + testFriendUser2.getUsername();
+        String uri = "/api/friends/add";
+
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setUsername(testFriendUser2.getUsername());
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
+                .content(JsonParserUtil.asJsonString(friendRequest))
+                .param("username", testFriendUser2.getUsername())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
@@ -108,9 +114,29 @@ public class FriendIntegrationTests {
         assert(jsonResponse.get("message").asText().contains("Friend request sent successfully"));
     }
 
-    //User 2 accepts friend request from user 1
     @Test
     @Order(2)
+    public void testUser1SentFriendRequestToNonExistingUser() throws Exception {
+        String uri = "/api/friends/add";
+
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setUsername("nonExistingUser");
+
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                .header("Authorization", "Bearer " + testFriendUserToken1)
+                .content(JsonParserUtil.asJsonString(friendRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("status").asInt() == 404);
+        assert(jsonResponse.get("message").asText().contains("User not found"));
+    }
+
+    //User 2 accepts friend request from user 1
+    @Test
+    @Order(3)
     public void testFriend2AcceptsFriend1FriendRequest() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser1.getId() + "/accept";
@@ -129,7 +155,7 @@ public class FriendIntegrationTests {
 
     //User 1 fetches friends list and assert it only contains accepted friends
     @Test
-    @Order(3)
+    @Order(4)
     public void testFriend1FetchesFriendsList() throws Exception {
         String uri = "/api/friends/list";
 
@@ -150,7 +176,7 @@ public class FriendIntegrationTests {
 
     //User 1 fetches friend 2 by id and asserts the friendship is accepted
     @Test
-    @Order(4)
+    @Order(5)
     public void testFriend1FetchesFriendById() throws Exception {
         String uri = "/api/friends/" + testFriendUser2.getId();
 
@@ -169,7 +195,7 @@ public class FriendIntegrationTests {
 
     //User 1 removes friend 2
     @Test
-    @Order(5)
+    @Order(6)
     public void testFriend1RemovesFriend2() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser2.getId();
@@ -188,13 +214,17 @@ public class FriendIntegrationTests {
 
     //User 1 sends friend request to user 3
     @Test
-    @Order(6)
+    @Order(7)
     public void testFriend1SendsFriendRequestToFriend3() throws Exception {
 
-        String uri = "/api/friends/add/" + testFriendUser3.getUsername();
+        String uri = "/api/friends/add";
+
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setUsername(testFriendUser3.getUsername());
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
+                .content(JsonParserUtil.asJsonString(friendRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
@@ -207,7 +237,7 @@ public class FriendIntegrationTests {
 
     //User 1 fetches all pending friend requests and asserts it contains the friend request sent to user 3
     @Test
-    @Order(7)
+    @Order(8)
     public void testFriend1GetAllPendingFriendRequests() throws Exception {
         String uri = "/api/friends/pending";
 
@@ -227,7 +257,7 @@ public class FriendIntegrationTests {
 
     //User 3 fetches all pending friend requests and asserts it contains the friend request sent to user 3
     @Test
-    @Order(8)
+    @Order(9)
     public void testFriend3GetAllPendingFriendRequests() throws Exception {
         String uri = "/api/friends/pending";
 
@@ -247,7 +277,7 @@ public class FriendIntegrationTests {
 
     //User 3 declines friend request from user 1
     @Test
-    @Order(9)
+    @Order(10)
     public void testFriend3DeclinesFriendRequestFromFriend1() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser1.getId() + "/reject";
@@ -266,13 +296,17 @@ public class FriendIntegrationTests {
     
     //User 1 resent friend request to user 3
     @Test
-    @Order(10)
+    @Order(11)
     public void testResentFriendRequestFromFriend1ToFriend3() throws Exception {
 
-        String uri = "/api/friends/add/" + testFriendUser3.getUsername();
+        String uri = "/api/friends/add";
+
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setUsername(testFriendUser3.getUsername());
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
+                .content(JsonParserUtil.asJsonString(friendRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
@@ -285,7 +319,7 @@ public class FriendIntegrationTests {
 
     //User 3 accepts friend request from user 1
     @Test
-    @Order(11)
+    @Order(12)
     public void testFriend3AcceptsFriend1FriendRequest() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser1.getId() + "/accept";
@@ -304,7 +338,7 @@ public class FriendIntegrationTests {
 
     //User 1 removes friend 3
     @Test
-    @Order(12)
+    @Order(13)
     public void testRemoveFriend1RemovesFriend3() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser3.getId();

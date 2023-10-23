@@ -20,6 +20,7 @@ import com.example.shaden.features.ResponseData;
 import com.example.shaden.features.friend.FriendController;
 import com.example.shaden.features.friend.FriendService;
 import com.example.shaden.features.friend.FriendshipStatus;
+import com.example.shaden.features.friend.request.FriendRequest;
 import com.example.shaden.features.friend.response.FriendResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +36,9 @@ public class FriendControllerUnitTests {
     public void testAddFriendEndpoint() {
         Mockito.doNothing().when(friendService).sentFriendRequest(any(String.class));
 
-        ResponseEntity<ResponseData> responseEntity = friendController.sentFriendRequest("TestFriend");
+        FriendRequest friendRequest = new FriendRequest("TestFriend");
+
+        ResponseEntity<ResponseData> responseEntity = friendController.sentFriendRequest(friendRequest);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
         ResponseData responseData = responseEntity.getBody();
