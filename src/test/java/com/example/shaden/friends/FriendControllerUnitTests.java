@@ -33,9 +33,9 @@ public class FriendControllerUnitTests {
 
     @Test
     public void testAddFriendEndpoint() {
-        Mockito.doNothing().when(friendService).sentFriendRequest(any(Long.class));
+        Mockito.doNothing().when(friendService).sentFriendRequest(any(String.class));
 
-        ResponseEntity<ResponseData> responseEntity = friendController.sentFriendRequest(1L);
+        ResponseEntity<ResponseData> responseEntity = friendController.sentFriendRequest("TestFriend");
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
 
         ResponseData responseData = responseEntity.getBody();
