@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.shaden.config.JsonParserUtil;
+import com.example.shaden.features.authentication.request.AuthenticationRequest;
+import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.user.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -44,10 +46,13 @@ public class AuthIntegrationTest {
     @Test
     @Order(1)
     public void accountRegistrationTest() throws Exception {
-        String jsonRequest = "{\"username\":\"authTestUsername\",\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("authTestUsername");
+        registerRequest.setEmail("authtest@mail.com");
+        registerRequest.setPassword("Testpass1234");
    
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
-                .content(jsonRequest)
+                .content(JsonParserUtil.asJsonString(registerRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
@@ -63,10 +68,14 @@ public class AuthIntegrationTest {
     @Test
     @Order(2)
     public void invalidInputAccountRegistration() throws Exception {
-        String jsonRequest = "{\"username\":\"\",\"email\":\"testmail.com\",\"password\":\"Testpass\"}";
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("");
+        registerRequest.setEmail("testmail.com");
+        registerRequest.setPassword("Testpass");
+    
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
-                .content(jsonRequest)
+                .content(JsonParserUtil.asJsonString(registerRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -82,10 +91,13 @@ public class AuthIntegrationTest {
     @Test
     @Order(3)
     public void accountWithEmailAlreadyExists() throws Exception {
-        String jsonRequest = "{\"username\":\"authTestUsername\",\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
+        RegisterRequest registerRequest = new RegisterRequest();
+        registerRequest.setUsername("authTestUsername");
+        registerRequest.setEmail("authtest@mail.com");
+        registerRequest.setPassword("Testpass1234");
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/register")
-                .content(jsonRequest)
+                .content(JsonParserUtil.asJsonString(registerRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict()).andReturn();
 
@@ -97,11 +109,13 @@ public class AuthIntegrationTest {
     @Test
     @Order(4)
     public void testLogin() throws Exception {
-        String jsonRequest = "{\"email\":\"authtest@mail.com\",\"password\":\"Testpass1234\"}";
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setEmail("authtest@mail.com");
+        authenticationRequest.setPassword("Testpass1234");
    
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonRequest))
+                .content(JsonParserUtil.asJsonString(authenticationRequest)))
                 .andExpect(status().isOk())
                 .andReturn();
    
@@ -120,11 +134,13 @@ public class AuthIntegrationTest {
     @Order(5)
     public void testInvalidCredentialsLogin() throws Exception {
 
-        String jsonRequest = "{\"email\":\"authtest@mail.com\",\"password\":\"Testpass1\"}";
+        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
+        authenticationRequest.setEmail("authtest@mail.com");
+        authenticationRequest.setPassword("Testpass1");
         
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonRequest))
+                .content(JsonParserUtil.asJsonString(authenticationRequest)))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
 
