@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class PendingFriendRequestResponse {
     
     private Long requestId;    
-    private Long friendId; // Combined sender and receiver into a single 'friendId'
+    private Long friendId;
     private String friendUsername;
     private String status;
     private String requestType;
