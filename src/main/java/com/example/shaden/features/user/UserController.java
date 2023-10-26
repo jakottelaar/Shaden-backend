@@ -78,10 +78,10 @@ public class UserController {
         LOGGER.info("Delete user endpoint called");
         userService.deleteUserWithId(userId);
         ResponseData responseBody = new ResponseData();
-        responseBody.setStatusCode(HttpStatus.NO_CONTENT.value());
+        responseBody.setStatusCode(HttpStatus.OK.value());
         responseBody.setMessage("Successfully deleted user");
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
     @DeleteMapping("/profile")
@@ -90,10 +90,10 @@ public class UserController {
         userService.deleteUserWithTokenId();
 
         ResponseData responseBody = new ResponseData();
-        responseBody.setStatusCode(HttpStatus.NO_CONTENT.value());
+        responseBody.setStatusCode(HttpStatus.OK.value());
         responseBody.setMessage("Successfully deleted your account");
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseBody);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
 }

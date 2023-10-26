@@ -141,12 +141,12 @@ public class UserIntegrationTests {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/profile")
                 .header("Authorization", "Bearer " + accessTokenUser1))
-                .andExpect(status().isNoContent())
+                .andExpect(status().isOk())
                 .andReturn();
 
         JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
-        assert(jsonResponse.get("status").asInt() == 204);
+        assert(jsonResponse.get("status").asInt() == 200);
         assert(jsonResponse.get("message").asText().equals("Successfully deleted your account"));
         assert(jsonResponse.get("results").asText().equals("null"));
     }
