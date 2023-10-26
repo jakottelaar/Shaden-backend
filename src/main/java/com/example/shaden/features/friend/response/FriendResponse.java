@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class FriendResponse {
     
     private Long friendId;
-    private String friendUserName;
+    private String friendUsername;
     private FriendshipStatus status;
 
 }

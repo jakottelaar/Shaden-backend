@@ -27,7 +27,6 @@ public class FriendController {
     public ResponseEntity<ResponseData> sentFriendRequest(@RequestBody FriendRequest friendRequest) {
         String username = friendRequest.getUsername();
         friendService.sentFriendRequest(username);
-        System.out.println(username);
 
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.CREATED.value());
@@ -88,15 +87,27 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
+    @DeleteMapping("/{friendId}/cancel")
+    public ResponseEntity<ResponseData> cancelOutgoingFriendRequest(@PathVariable Long friendId) {
+        friendService.cancelOutgoingFriendRequest(friendId);
+
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("Outgoing friend request cancelled successfully");
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+
+    } 
+
     @DeleteMapping("/{friendId}")
     public ResponseEntity<ResponseData> removeFriend(@PathVariable Long friendId) {
         friendService.removeFriend(friendId);
 
         ResponseData responseData = new ResponseData();
-        responseData.setStatusCode(HttpStatus.NO_CONTENT.value());
+        responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("Friend removed successfully");
 
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(responseData);
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
 }

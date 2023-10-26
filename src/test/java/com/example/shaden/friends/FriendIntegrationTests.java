@@ -203,11 +203,11 @@ public class FriendIntegrationTests {
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
-        assert(jsonResponse.get("status").asInt() == 204);
+        assert(jsonResponse.get("status").asInt() == 200);
         assert(jsonResponse.get("message").asText().contains("Friend removed successfully"));
 
     }
@@ -317,9 +317,49 @@ public class FriendIntegrationTests {
 
     }
 
-    //User 3 accepts friend request from user 1
+    //User 1 cancels friend request to user 3
     @Test
     @Order(12)
+    public void testFriend1CancelsFriendRequestToFriend3() throws Exception {
+
+        String uri = "/api/friends/" + testFriendUser3.getId() + "/cancel";
+
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.delete(uri)
+                .header("Authorization", "Bearer " + testFriendUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("status").asInt() == 200);
+        assert(jsonResponse.get("message").asText().contains("Outgoing friend request cancelled successfully"));
+
+    }
+
+    //User 1 resent friend request to user 3 after cancelling
+    @Test
+    @Order(13)
+    public void testResentFriendRequestFromFriend1ToFriend3AfterCancelling() throws Exception {
+        String uri = "/api/friends/add";
+
+        FriendRequest friendRequest = new FriendRequest();
+        friendRequest.setUsername(testFriendUser3.getUsername());
+
+        MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
+                .header("Authorization", "Bearer " + testFriendUserToken1)
+                .content(JsonParserUtil.asJsonString(friendRequest))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated()).andReturn();
+
+        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+
+        assert(jsonResponse.get("status").asInt() == 201);
+        assert(jsonResponse.get("message").asText().contains("Friend request sent successfully"));
+    }
+
+    //User 3 accepts friend request from user 1
+    @Test
+    @Order(14)
     public void testFriend3AcceptsFriend1FriendRequest() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser1.getId() + "/accept";
@@ -338,7 +378,7 @@ public class FriendIntegrationTests {
 
     //User 1 removes friend 3
     @Test
-    @Order(13)
+    @Order(15)
     public void testRemoveFriend1RemovesFriend3() throws Exception {
 
         String uri = "/api/friends/" + testFriendUser3.getId();
@@ -346,11 +386,11 @@ public class FriendIntegrationTests {
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent()).andReturn();
+                .andExpect(status().isOk()).andReturn();
 
         JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
-        assert(jsonResponse.get("status").asInt() == 204);
+        assert(jsonResponse.get("status").asInt() == 200);
         assert(jsonResponse.get("message").asText().contains("Friend removed successfully"));
 
     }

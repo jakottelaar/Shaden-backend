@@ -3,6 +3,8 @@ package com.example.shaden.features.friend;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,11 +25,14 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserRepository userRepository;
 
+    private Logger LOG = LoggerFactory.getLogger(FriendService.class.getName());
+
     public void sentFriendRequest(String username) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
-    
-        if (user.getUsername().equals(username)) {
+        
+        if (user.getUser().getUsername().equals(username)) {
+            LOG.info(username + " is trying to add himself as a friend.");
             throw new IllegalArgumentException("You cannot add yourself as a friend.");
         }
     
@@ -192,6 +197,37 @@ public class FriendService {
             }
         
             friendRepository.updateFriendShipStatus(friendship.getId(), FriendshipStatus.REJECTED);
+    }
+    
+    public void cancelOutgoingFriendRequest(Long friendId) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal user = (UserPrincipal) auth.getPrincipal();
+    
+        User friend = userRepository.findById(friendId)
+                .orElseThrow(() -> new ResourceNotFoundException("Friend not found"));
+    
+        Friendship friendship = friendRepository.findBySenderAndReceiver(user.getUser(), friend);
+    
+        if (friendship == null) {
+            throw new ResourceNotFoundException("Friendship not found");
+        }
+        
+        switch (friendship.getStatus()) {
+            case PENDING:
+                break;
+            case REJECTED:
+                throw new IllegalArgumentException("Friendship is already rejected");
+            case ACCEPTED:
+                throw new IllegalArgumentException("Friendship is already accepted");
+            case BLOCKED:
+                throw new IllegalArgumentException("Friendship is blocked");
+            default:
+                break;
+        }
+    
+        friendRepository.delete(friendship);
+
     }
 
     public void removeFriend(Long friendId) {
