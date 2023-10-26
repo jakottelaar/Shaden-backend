@@ -13,7 +13,9 @@ import jakarta.transaction.Transactional;
 
 public interface FriendRepository extends JpaRepository<Friendship, Long>{
 
-    Friendship findBySenderAndReceiver(User sender, User receiver);
+    @Query("SELECT f FROM Friendship f " +
+    "WHERE (f.sender = :user1 AND f.receiver = :user2) OR (f.sender = :user2 AND f.receiver = :user1)")
+    Friendship findBySenderAndReceiver(@Param("user1") User user1, @Param("user2") User user2);
 
     @Transactional
     @Modifying(clearAutomatically = true)
