@@ -2,9 +2,15 @@ package com.example.shaden.features.user.request;
 
 import java.util.Optional;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserProfileUpdateRequest {
 
     private Optional<String> username = Optional.empty();
