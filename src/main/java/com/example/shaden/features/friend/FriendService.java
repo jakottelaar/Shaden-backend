@@ -152,9 +152,9 @@ public class FriendService {
     
         List<PendingFriendRequestResponse> pendingFriendRequestResponses = friendships.stream()
             .map(friendship -> {
-                User friend = (friendship.getSender().equals(userPrincipal.getUser())) ? friendship.getReceiver() : friendship.getSender();
-                String requestType = (friendship.getSender().equals(userPrincipal.getUser())) ? "OUTGOING" : "INCOMING";
-    
+                User friend = (friendship.getSender().getId().equals(userPrincipal.getUser().getId())) ? friendship.getReceiver() : friendship.getSender();
+                String requestType = (friendship.getSender().getId().equals(userPrincipal.getUser().getId())) ? "OUTGOING" : "INCOMING";
+                
                 return PendingFriendRequestResponse.builder()
                     .requestId(friendship.getId())
                     .friendId(friend.getId())

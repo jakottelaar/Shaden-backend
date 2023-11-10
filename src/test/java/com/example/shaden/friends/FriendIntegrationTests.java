@@ -248,6 +248,8 @@ public class FriendIntegrationTests {
 
         JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
+        LOGGER.info("jsonResponse: " + jsonResponse.toString());
+
         assert(jsonResponse.get("status").asInt() == 200);
         assert(jsonResponse.get("message").asText().contains("Pending friend requests retrieved successfully"));
         assert(jsonResponse.get("results").get(0).get("status").asText().equals(FriendshipStatus.PENDING.toString()));
