@@ -17,17 +17,19 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@DynamicUpdate()
-@Data
+@DynamicUpdate
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "_user", uniqueConstraints = {@UniqueConstraint(columnNames = {"username", "email"})})
-public class User{
+public class User {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
