@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+    container_name: test
+    env_file:
+      - .env
+    depends_on:
+      - db
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      SPRING_DATASOURCE_URL: ${DOCKER_DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DOCKER_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DOCKER_DB_PASSWORD}
+    ports:
+      - "8080:8080"
+
+  db:
+    image: "postgres:13.1-alpine"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DOCKER_DB_USER}
+      POSTGRES_PASSWORD: ${DOCKER_DB_PASSWORD}
+    ports:
+      - "5432:5432"
