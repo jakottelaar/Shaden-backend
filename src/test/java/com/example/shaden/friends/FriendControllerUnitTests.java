@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.example.shaden.features.ResponseData;
 import com.example.shaden.features.friend.FriendController;
@@ -24,6 +25,7 @@ import com.example.shaden.features.friend.request.FriendRequest;
 import com.example.shaden.features.friend.response.FriendResponse;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class FriendControllerUnitTests {
     
     @InjectMocks

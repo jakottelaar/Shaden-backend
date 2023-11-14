@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.example.shaden.exception.custom.DuplicateDataException;
 import com.example.shaden.features.authentication.AuthenticationService;
@@ -19,6 +20,7 @@ import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
+@ActiveProfiles("test")
 public class AuthServiceUnitTests {
     
     @InjectMocks
