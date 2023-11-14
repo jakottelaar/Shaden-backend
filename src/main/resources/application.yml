@@ -1,11 +1,8 @@
 spring:
+  profiles:
+    active: dev
   config:
     import: optional:file:.env[.properties]
-  datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-
   jpa:
     properties:
       hibernate:
@@ -30,6 +27,6 @@ application:
   security:
     jwt:
       secret-key: ${SECRET_KEY}
-      expiration: 900000
+      expiration: ${ACCESS_TOKEN_EXPIRATION_TIME}
       refresh-token:
-        expiration: 604800000
+        expiration: ${REFRESH_TOKEN_EXPIRATION_TIME}
