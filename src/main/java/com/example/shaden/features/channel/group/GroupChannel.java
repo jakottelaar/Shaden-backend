@@ -1,15 +1,11 @@
-package com.example.shaden.features.channel;
+package com.example.shaden.features.channel.group;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import com.example.shaden.features.channel.Channel;
 import com.example.shaden.features.user.User;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -29,11 +25,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "group_channel")
-public class GroupChannel {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class GroupChannel extends Channel{
 
     @ManyToOne
     @JoinColumn(name = "creator_id")
@@ -48,10 +40,4 @@ public class GroupChannel {
     )
     private List<User> users;
     
-    @Column(name = "created_date")
-    private LocalDateTime createdDate;
-
-    @Column(name = "last_modified_date")
-    private LocalDateTime lastModifiedDate;
-
 }
