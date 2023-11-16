@@ -1,7 +1,8 @@
-package com.example.shaden.features.channel;
+package com.example.shaden.features.messaging;
 
 import java.time.LocalDateTime;
 
+import com.example.shaden.features.channel.Channel;
 import com.example.shaden.features.user.User;
 
 import jakarta.persistence.Column;
@@ -9,26 +10,33 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
-@Table(name = "dm_channel")
-public class DMChannel {
-    
+@Table(name = "message")
+public class Message {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String content;
+    
+    @ManyToOne
+    @JoinColumn(name = "sender_id", referencedColumnName = "user_id")
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "channel_id")
+    private Channel channel;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
@@ -36,10 +44,5 @@ public class DMChannel {
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
 
-    @ManyToOne
-    private User user1;
-
-    @ManyToOne
-    private User user2;
 
 }
