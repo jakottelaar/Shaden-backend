@@ -2,6 +2,8 @@ package com.example.shaden.features.channel.dm;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +31,19 @@ public class DMChannelController {
         .build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+    }
+
+    @GetMapping("/{channelId}")
+    public ResponseEntity<ResponseData> getDMChannelWithId(@PathVariable Long channelId) {
+        
+        ResponseData response = ResponseData.builder()
+        .statusCode(HttpStatus.OK.value())
+        .message("Successfully retrieved a DM channel")
+        .results(dmChannelService.getDMChannelWithId(channelId))
+        .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
