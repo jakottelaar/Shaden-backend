@@ -1,5 +1,7 @@
 package com.example.shaden.features.channel.dm;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
@@ -38,6 +40,8 @@ public class DMChannelService {
         .user2(user2)
         .build();
 
+        dmChannel.setCreatedDate(LocalDateTime.now());
+
         dmChannelRepository.save(dmChannel);
 
         return CreatedDmChannelResponse.builder()
@@ -47,5 +51,4 @@ public class DMChannelService {
         .build();
 
     }
-
 }
