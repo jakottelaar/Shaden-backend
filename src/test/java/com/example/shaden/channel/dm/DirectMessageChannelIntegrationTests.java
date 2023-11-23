@@ -89,8 +89,7 @@ public class DirectMessageChannelIntegrationTests {
         String uri = "/api/dm-channels";
 
         CreateDmChannelRequest request = new CreateDmChannelRequest();
-        request.setUser1Id(testFriend1.getId());
-        request.setUser2Id(testFriend2.getId());
+        request.setUserId(testFriend2.getId());
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testUserToken1)

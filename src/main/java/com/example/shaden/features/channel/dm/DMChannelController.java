@@ -47,4 +47,17 @@ public class DMChannelController {
 
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ResponseData> getDMChannelsWithUserId(@PathVariable Long userId) {
+        
+        ResponseData response = ResponseData.builder()
+        .statusCode(HttpStatus.OK.value())
+        .message("Successfully retrieved DM channels")
+        .results(dmChannelService.getDMChannelsWithUserId(userId))
+        .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
 }

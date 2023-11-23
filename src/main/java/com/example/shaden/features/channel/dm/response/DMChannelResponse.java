@@ -1,8 +1,5 @@
 package com.example.shaden.features.channel.dm.response;
 
-import java.util.List;
-
-import com.example.shaden.features.messaging.response.MessageResponse;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Builder;
@@ -20,7 +17,5 @@ public class DMChannelResponse {
     private Long user1Id;
     @JsonProperty("user2_id")
     private Long user2Id;
-    @JsonProperty("messages")
-    private List<MessageResponse> messages;
 
 }
