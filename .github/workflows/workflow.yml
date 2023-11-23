@@ -70,4 +70,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/shaden-api:latest
+          tags: shaden/shaden-api:latest
