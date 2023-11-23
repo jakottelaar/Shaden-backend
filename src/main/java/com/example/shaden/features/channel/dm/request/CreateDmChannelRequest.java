@@ -9,7 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CreateDmChannelRequest {
     
-    private Long user1Id;
-    private Long user2Id;
+    private Long userId;
 
 }
