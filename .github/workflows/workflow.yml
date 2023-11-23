@@ -70,4 +70,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: shaden/shaden-api:latest
+          tags: jakottel/shaden:latest
