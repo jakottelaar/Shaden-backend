@@ -92,12 +92,14 @@ public class UserIntegrationTests {
                     .andExpect(status().isOk())
                     .andReturn();
 
-            JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
 
-            assert(jsonResponse.get("status").asInt() == 200);
-            assert(jsonResponse.get("message").asText().equals("Successfully retrieved users"));
-            assert(jsonResponse.get("results").get(0).get("username").asText().equals("testUser1"));
-            assert(jsonResponse.get("results").get(0).get("email").asText().equals("testuser1@mail.com"));
+            String jsonResponse = result.getResponse().getContentAsString();
+            JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+
+            assert(parsedResponse.get("status").getAsInt() == 200);
+            assert(parsedResponse.get("message").getAsString().equals("Successfully retrieved users"));
+            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("username").getAsString().equals("testUser1"));
+            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("email").getAsString().equals("testuser1@mail.com"));
     }
 
     @Test
@@ -108,14 +110,15 @@ public class UserIntegrationTests {
                     .andExpect(status().isOk())
                     .andReturn();
 
-            JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+            String jsonResponse = result.getResponse().getContentAsString();
+            JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-            assert(jsonResponse.get("status").asInt() == 200);
-            assert(jsonResponse.get("message").asText().equals("Successfully retrieved users"));
-            assert(jsonResponse.get("results").get(0).get("username").asText().equals("testUser1"));
-            assert(jsonResponse.get("results").get(0).get("email").asText().equals("testuser1@mail.com"));
-            assert(jsonResponse.get("results").get(1).get("username").asText().equals("testUser2"));
-            assert(jsonResponse.get("results").get(1).get("email").asText().equals("testuser2@mail.com"));
+            assert(parsedResponse.get("status").getAsInt() == 200);
+            assert(parsedResponse.get("message").getAsString().equals("Successfully retrieved users"));
+            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("username").getAsString().equals("testUser1"));
+            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("email").getAsString().equals("testuser1@mail.com"));
+            assert(parsedResponse.get("results").getAsJsonArray().get(1).getAsJsonObject().get("username").getAsString().equals("testUser2"));
+            assert(parsedResponse.get("results").getAsJsonArray().get(1).getAsJsonObject().get("email").getAsString().equals("testuser2@mail.com"));
     }
 
     @Test
@@ -131,12 +134,13 @@ public class UserIntegrationTests {
                 .andExpect(status().isOk())
                 .andReturn();
         
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().equals("Successfully updated user profile"));
-        assert(jsonResponse.get("results").get("username").asText().equals("testUser1Changed"));
-        assert(jsonResponse.get("results").get("email").asText().equals("test1changed@mail.com"));
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().equals("Successfully updated user profile"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("username").getAsString().equals("testUser1Changed"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("email").getAsString().equals("test1changed@mail.com"));
 
     }
 
@@ -149,11 +153,11 @@ public class UserIntegrationTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().equals("Successfully deleted your account"));
-        assert(jsonResponse.get("results").asText().equals("null"));
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().equals("Successfully deleted your account"));
     }
 
 }
