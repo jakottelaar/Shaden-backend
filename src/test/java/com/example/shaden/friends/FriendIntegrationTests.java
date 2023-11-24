@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.shaden.config.JsonParserUtil;
 import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
@@ -27,6 +26,7 @@ import com.example.shaden.features.friend.FriendshipStatus;
 import com.example.shaden.features.friend.request.FriendRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -45,6 +45,8 @@ public class FriendIntegrationTests {
 
     @Autowired
     private UserRepository userRepository;
+
+    private Gson gson = new Gson();
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FriendIntegrationTests.class);
 
@@ -106,7 +108,7 @@ public class FriendIntegrationTests {
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
-                .content(JsonParserUtil.asJsonString(friendRequest))
+                .content(gson.toJson(friendRequest))
                 .param("username", testFriendUser2.getUsername())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
@@ -128,7 +130,7 @@ public class FriendIntegrationTests {
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
-                .content(JsonParserUtil.asJsonString(friendRequest))
+                .content(gson.toJson(friendRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound()).andReturn();
 
@@ -237,7 +239,7 @@ public class FriendIntegrationTests {
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
-                .content(JsonParserUtil.asJsonString(friendRequest))
+                .content(gson.toJson(friendRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
@@ -322,7 +324,7 @@ public class FriendIntegrationTests {
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
-                .content(JsonParserUtil.asJsonString(friendRequest))
+                .content(gson.toJson(friendRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
@@ -363,7 +365,7 @@ public class FriendIntegrationTests {
 
         MvcResult result =  mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken1)
-                .content(JsonParserUtil.asJsonString(friendRequest))
+                .content(gson.toJson(friendRequest))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 

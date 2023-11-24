@@ -20,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.shaden.config.JsonParserUtil;
 import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
@@ -28,6 +27,7 @@ import com.example.shaden.features.channel.dm.DMChannelRepository;
 import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -49,6 +49,8 @@ public class DirectMessageChannelIntegrationTests {
 
     @Autowired
     private AuthenticationService authenticationService;
+
+    private Gson gson = new Gson();
 
     private Logger LOGGER = LoggerFactory.getLogger(DirectMessageChannelIntegrationTests.class);
 
@@ -94,7 +96,7 @@ public class DirectMessageChannelIntegrationTests {
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
-                .content(JsonParserUtil.asJsonString(request))
+                .content(gson.toJson(request))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
