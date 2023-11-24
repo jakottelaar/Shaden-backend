@@ -27,7 +27,8 @@ import com.example.shaden.features.friend.FriendshipStatus;
 import com.example.shaden.features.friend.request.FriendRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -110,10 +111,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-
-        assert(jsonResponse.get("status").asInt() == 201);
-        assert(jsonResponse.get("message").asText().contains("Friend request sent successfully"));
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+        
+        assert(parsedResponse.get("status").getAsInt() == 201);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request sent successfully"));
     }
 
     @Test
@@ -130,10 +132,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 404);
-        assert(jsonResponse.get("message").asText().contains("User not found"));
+        assert(parsedResponse.get("status").getAsInt() == 404);
+        assert(parsedResponse.get("message").getAsString().contains("User not found"));
     }
 
     //User 2 accepts friend request from user 1
@@ -148,11 +151,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friend request accepted successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request accepted successfully"));
     }
 
     //User 1 fetches friends list and assert it only contains accepted friends
@@ -166,13 +169,20 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
         LOGGER.info("jsonResponse: " + jsonResponse.toString());
+
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friends retrieved successfully"));
+        assert(parsedResponse.get("results").getAsJsonArray().size() == 1);
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("status").getAsString().equals(FriendshipStatus.ACCEPTED.toString()));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("friendUsername").getAsString().equals("testFriendUser2"));
         
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friends retrieved successfully"));
-        assert(jsonResponse.get("results").get(0).get("status").asText().equals(FriendshipStatus.ACCEPTED.toString()));
+        // assert(jsonResponse.get("status").asInt() == 200);
+        // assert(jsonResponse.get("message").asText().contains("Friends retrieved successfully"));
+        // assert(jsonResponse.get("results").get(0).get("status").asText().equals(FriendshipStatus.ACCEPTED.toString()));
 
     }
 
@@ -187,11 +197,12 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friend retrieved successfully"));
-        assert(jsonResponse.get("results").get("status").asText().equals(FriendshipStatus.ACCEPTED.toString()));
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friend retrieved successfully"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("status").getAsString().equals(FriendshipStatus.ACCEPTED.toString()));
 
     }
 
@@ -207,11 +218,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friend removed successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friend removed successfully"));
     }
 
     //User 1 sends friend request to user 3
@@ -230,11 +241,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 201);
-        assert(jsonResponse.get("message").asText().contains("Friend request sent successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 201);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request sent successfully"));
     }
 
     //User 1 fetches all pending friend requests and asserts it contains the friend request sent to user 3
@@ -248,15 +259,15 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
         LOGGER.info("jsonResponse: " + jsonResponse.toString());
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Pending friend requests retrieved successfully"));
-        assert(jsonResponse.get("results").get(0).get("status").asText().equals(FriendshipStatus.PENDING.toString()));
-        assert(jsonResponse.get("results").get(0).get("requestType").asText().equals("OUTGOING"));
-        assert(jsonResponse.get("results").get(0).get("friendUsername").asText().equals("testFriendUser3"));
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Pending friend requests retrieved successfully"));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("status").getAsString().equals(FriendshipStatus.PENDING.toString()));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("requestType").getAsString().equals("OUTGOING"));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("friendUsername").getAsString().equals("testFriendUser3"));
     }
 
     //User 3 fetches all pending friend requests and asserts it contains the friend request sent to user 3
@@ -270,13 +281,14 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Pending friend requests retrieved successfully"));
-        assert(jsonResponse.get("results").get(0).get("status").asText().equals(FriendshipStatus.PENDING.toString()));
-        assert(jsonResponse.get("results").get(0).get("requestType").asText().equals("INCOMING"));
-        assert(jsonResponse.get("results").get(0).get("friendUsername").asText().equals("testFriendUser1"));
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Pending friend requests retrieved successfully"));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("status").getAsString().equals(FriendshipStatus.PENDING.toString()));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("requestType").getAsString().equals("INCOMING"));
+        assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("friendUsername").getAsString().equals("testFriendUser1"));
     }
 
     //User 3 declines friend request from user 1
@@ -291,11 +303,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friend request rejected successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request rejected successfully"));
     }
     
     //User 1 resent friend request to user 3
@@ -314,11 +326,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 201);
-        assert(jsonResponse.get("message").asText().contains("Friend request sent successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 201);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request sent successfully"));
     }
 
     //User 1 cancels friend request to user 3
@@ -333,11 +345,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Outgoing friend request cancelled successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Outgoing friend request cancelled successfully"));
     }
 
     //User 1 resent friend request to user 3 after cancelling
@@ -355,10 +367,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 201);
-        assert(jsonResponse.get("message").asText().contains("Friend request sent successfully"));
+        assert(parsedResponse.get("status").getAsInt() == 201);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request sent successfully"));
     }
 
     //User 3 accepts friend request from user 1
@@ -373,11 +386,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friend request accepted successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friend request accepted successfully"));
     }
 
     //User 1 removes friend 3
@@ -392,11 +405,11 @@ public class FriendIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().contains("Friend removed successfully"));
-
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Friend removed successfully"));
     }
     
 

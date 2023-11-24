@@ -28,7 +28,8 @@ import com.example.shaden.features.channel.dm.DMChannelRepository;
 import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -97,15 +98,15 @@ public class DirectMessageChannelIntegrationTests {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
         LOGGER.info(jsonResponse.toString());        
 
-        assert(jsonResponse.get("status").asInt() == 201);
-        assert(jsonResponse.get("message").asText().equals("Successfully created a DM channel"));
-        assert(jsonResponse.get("results").get("user1_id").asLong() == testFriend1.getId());
-        assert(jsonResponse.get("results").get("user2_id").asLong() == testFriend2.getId());
-
+        assert(parsedResponse.get("status").getAsInt() == 201);
+        assert(parsedResponse.get("message").getAsString().equals("Successfully created a DM channel"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("user1_id").getAsLong() == testFriend1.getId());
+        assert(parsedResponse.get("results").getAsJsonObject().get("user2_id").getAsLong() == testFriend2.getId());
     }
 
 }
