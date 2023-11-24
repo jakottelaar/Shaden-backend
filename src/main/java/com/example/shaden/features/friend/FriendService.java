@@ -80,7 +80,7 @@ public class FriendService {
     
         List<FriendResponse> friendResponses = friendships.stream()
             .map(friendship -> {
-                User friend = friendship.getSender().equals(user.getUser()) ? friendship.getReceiver() : friendship.getSender();
+                User friend = friendship.getReceiver().equals(user.getUser()) ? friendship.getSender() : friendship.getReceiver();
     
                 return new FriendResponse(friend.getId(), friend.getUsername(), friendship.getStatus());
             })
