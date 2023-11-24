@@ -17,12 +17,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.shaden.config.JsonParserUtil;
 import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.user.UserRepository;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 

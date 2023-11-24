@@ -19,7 +19,8 @@ import com.example.shaden.config.JsonParserUtil;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.user.UserRepository;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,12 +59,13 @@ public class AuthIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 201);
-        assert(jsonResponse.get("message").asText().contains("User registered successfully"));
-        assert(jsonResponse.get("results").get("access_token").asText() != null);
-        assert(jsonResponse.get("results").get("refresh_token").asText() != null);
+        assert(parsedResponse.get("status").getAsInt() == 201);
+        assert(parsedResponse.get("message").getAsString().contains("User registered successfully"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("access_token").getAsString() != null);
+        assert(parsedResponse.get("results").getAsJsonObject().get("refresh_token").getAsString() != null);
     }
 
     //Test invalid input for account registration
@@ -82,11 +84,14 @@ public class AuthIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-        assert(jsonResponse.get("message").asText().contains("Validation failed"));
-        assert(jsonResponse.get("errors").toString().contains("Username is required"));
-        assert(jsonResponse.get("errors").toString().contains("Invalid email format"));
-        assert(jsonResponse.get("errors").toString().contains("Password must contain at least one letter, one digit, and be 8 or more characters long"));
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+        
+        assert(parsedResponse.get("status").getAsInt() == 400);
+        assert(parsedResponse.get("message").getAsString().contains("Validation failed"));
+        assert(parsedResponse.get("errors").toString().contains("Username is required"));
+        assert(parsedResponse.get("errors").toString().contains("Invalid email format"));
+        assert(parsedResponse.get("errors").toString().contains("Password must contain at least one letter, one digit, and be 8 or more characters long"));
     }
 
     //Test account registration with email that already exists
@@ -103,8 +108,11 @@ public class AuthIntegrationTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict()).andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-        assert(jsonResponse.get("message").asText().contains("Email already exists"));
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+
+        assert(parsedResponse.get("status").getAsInt() == 409);
+        assert(parsedResponse.get("message").getAsString().contains("Email already exists"));
     }
     
     //Test login
@@ -121,14 +129,16 @@ public class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
    
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
-
-        assert(jsonResponse.get("message").asText().contains("User authenticated successfully"));
-        assert(jsonResponse.get("results").get("access_token").asText() != null);
-        assert(jsonResponse.get("results").get("refresh_token").asText() != null);
-
-        accessToken = jsonResponse.get("results").get("access_token").asText();
-        refreshToken = jsonResponse.get("results").get("refresh_token").asText();
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+        
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("User authenticated successfully"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("access_token").getAsString() != null);
+        assert(parsedResponse.get("results").getAsJsonObject().get("refresh_token").getAsString() != null);
+    
+        accessToken = parsedResponse.get("results").getAsJsonObject().get("access_token").getAsString();
+        refreshToken = parsedResponse.get("results").getAsJsonObject().get("refresh_token").getAsString();
     }
 
     //Test invalid credentials login
@@ -148,9 +158,11 @@ public class AuthIntegrationTest {
 
         assert(result.getResponse().getContentAsString().contains("Invalid email or password"));
         
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("message").asText().contains("Invalid email or password"));
+        assert(parsedResponse.get("status").getAsInt() == 401);
+        assert(parsedResponse.get("message").getAsString().contains("Invalid email or password"));
 
     }
 
@@ -165,11 +177,13 @@ public class AuthIntegrationTest {
                 .andExpect(status().isOk())
                 .andReturn();
         
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("message").asText().contains("Token refreshed successfully"));
-        assert(jsonResponse.get("results").get("access_token").asText() != null);
-        assert(jsonResponse.get("results").get("refresh_token").asText() != null);
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().contains("Token refreshed successfully"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("access_token").getAsString() != null);
+        assert(parsedResponse.get("results").getAsJsonObject().get("refresh_token").getAsString() != null);
 
     }
 
