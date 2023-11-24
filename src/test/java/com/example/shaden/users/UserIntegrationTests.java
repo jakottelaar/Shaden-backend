@@ -23,6 +23,8 @@ import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.user.UserRepository;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -73,12 +75,13 @@ public class UserIntegrationTests {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        JsonNode jsonResponse = JsonParserUtil.parseJsonResponse(result);
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
 
-        assert(jsonResponse.get("status").asInt() == 200);
-        assert(jsonResponse.get("message").asText().equals("Successfully retrieved user profile"));
-        assert(jsonResponse.get("results").get("username").asText().equals("testUser1"));
-        assert(jsonResponse.get("results").get("email").asText().equals("testuser1@mail.com"));
+        assert(parsedResponse.get("status").getAsInt() == 200);
+        assert(parsedResponse.get("message").getAsString().equals("Successfully retrieved user profile"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("username").getAsString().equals("testUser1"));
+        assert(parsedResponse.get("results").getAsJsonObject().get("email").getAsString().equals("testuser1@mail.com"));
     }
 
     @Test
