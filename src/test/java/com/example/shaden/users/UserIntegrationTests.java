@@ -12,17 +12,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.user.UserRepository;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -67,95 +65,65 @@ public class UserIntegrationTests {
     @Test
     @Order(1)
     public void testGetUserProfile() throws Exception {
-
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/users/profile")
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/users/profile")
                 .header("Authorization", "Bearer " + accessTokenUser1))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-        assert(parsedResponse.get("status").getAsInt() == 200);
-        assert(parsedResponse.get("message").getAsString().equals("Successfully retrieved user profile"));
-        assert(parsedResponse.get("results").getAsJsonObject().get("username").getAsString().equals("testUser1"));
-        assert(parsedResponse.get("results").getAsJsonObject().get("email").getAsString().equals("testuser1@mail.com"));
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully retrieved user profile"))
+                .andExpect(jsonPath("$.results.username").value("testUser1"))
+                .andExpect(jsonPath("$.results.email").value("testuser1@mail.com"));
     }
 
     @Test
     @Order(2)
     public void testUser2SearchUser1() throws Exception {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search?username=testUser1")
-                    .header("Authorization", "Bearer " + accessTokenUser2))
-                    .andExpect(status().isOk())
-                    .andReturn();
-
-
-            String jsonResponse = result.getResponse().getContentAsString();
-            JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-            assert(parsedResponse.get("status").getAsInt() == 200);
-            assert(parsedResponse.get("message").getAsString().equals("Successfully retrieved users"));
-            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("username").getAsString().equals("testUser1"));
-            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("email").getAsString().equals("testuser1@mail.com"));
-    }
-
-    @Test
-    @Order(2)
-    public void testUser1SearchAllUsers() throws Exception {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search?username=testUser")
-                    .header("Authorization", "Bearer " + accessTokenUser2))
-                    .andExpect(status().isOk())
-                    .andReturn();
-
-            String jsonResponse = result.getResponse().getContentAsString();
-            JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-            assert(parsedResponse.get("status").getAsInt() == 200);
-            assert(parsedResponse.get("message").getAsString().equals("Successfully retrieved users"));
-            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("username").getAsString().equals("testUser1"));
-            assert(parsedResponse.get("results").getAsJsonArray().get(0).getAsJsonObject().get("email").getAsString().equals("testuser1@mail.com"));
-            assert(parsedResponse.get("results").getAsJsonArray().get(1).getAsJsonObject().get("username").getAsString().equals("testUser2"));
-            assert(parsedResponse.get("results").getAsJsonArray().get(1).getAsJsonObject().get("email").getAsString().equals("testuser2@mail.com"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search?username=testUser1")
+                .header("Authorization", "Bearer " + accessTokenUser2))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully retrieved users"))
+                .andExpect(jsonPath("$.results[0].username").value("testUser1"))
+                .andExpect(jsonPath("$.results[0].email").value("testuser1@mail.com"));
     }
 
     @Test
     @Order(3)
-    public void testUpdateUserProfile() throws Exception {
-            
+    public void testUser1SearchAllUsers() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search?username=testUser")
+                .header("Authorization", "Bearer " + accessTokenUser1))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully retrieved users"))
+                .andExpect(jsonPath("$.results[0].username").value("testUser1"))
+                .andExpect(jsonPath("$.results[0].email").value("testuser1@mail.com"))
+                .andExpect(jsonPath("$.results[1].username").value("testUser2"))
+                .andExpect(jsonPath("$.results[1].email").value("testuser2@mail.com"));
+     }
+
+     @Test
+     @Order(4)
+     public void testUpdateUserProfile() throws Exception {
         String jsonRequest = "{\"username\":\"testUser1Changed\",\"email\":\"test1changed@mail.com\"}";
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/profile")
+        mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/profile")
                 .header("Authorization", "Bearer " + accessTokenUser1)
                 .contentType("application/json")
                 .content(jsonRequest))
                 .andExpect(status().isOk())
-                .andReturn();
-        
-        String jsonResponse = result.getResponse().getContentAsString();
-        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully updated user profile"))
+                .andExpect(jsonPath("$.results.username").value("testUser1Changed"))
+                .andExpect(jsonPath("$.results.email").value("test1changed@mail.com"));
+     }
 
-        assert(parsedResponse.get("status").getAsInt() == 200);
-        assert(parsedResponse.get("message").getAsString().equals("Successfully updated user profile"));
-        assert(parsedResponse.get("results").getAsJsonObject().get("username").getAsString().equals("testUser1Changed"));
-        assert(parsedResponse.get("results").getAsJsonObject().get("email").getAsString().equals("test1changed@mail.com"));
-
-    }
-
-    @Test
-    @Order(4)
-    public void testDeleteUserAccount() throws Exception {
-
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/profile")
+     @Test
+     @Order(5)
+     public void testDeleteUserAccount() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/profile")
                 .header("Authorization", "Bearer " + accessTokenUser1))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-        assert(parsedResponse.get("status").getAsInt() == 200);
-        assert(parsedResponse.get("message").getAsString().equals("Successfully deleted your account"));
-    }
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully deleted your account"));
+     }
 
 }

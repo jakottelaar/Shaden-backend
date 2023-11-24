@@ -1,5 +1,6 @@
 package com.example.shaden.channel.dm;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.jupiter.api.AfterAll;
@@ -17,7 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.shaden.features.authentication.AuthenticationService;
@@ -28,8 +28,6 @@ import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -87,28 +85,21 @@ public class DirectMessageChannelIntegrationTests {
 
     @Test
     @Order(1)
-    public void Create_DM_Channel() throws Exception {
-        
+    public void createDMChannel() throws Exception {
         String uri = "/api/dm-channels";
 
         CreateDmChannelRequest request = new CreateDmChannelRequest();
         request.setUserId(testFriend2.getId());
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
+        mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
                 .content(gson.toJson(request))
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andReturn();
-
-        String jsonResponse = result.getResponse().getContentAsString();
-        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
-
-        LOGGER.info(jsonResponse.toString());        
-
-        assert(parsedResponse.get("status").getAsInt() == 201);
-        assert(parsedResponse.get("message").getAsString().equals("Successfully created a DM channel"));
-        assert(parsedResponse.get("results").getAsJsonObject().get("user1_id").getAsLong() == testFriend1.getId());
-        assert(parsedResponse.get("results").getAsJsonObject().get("user2_id").getAsLong() == testFriend2.getId());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.status").value(201))
+                .andExpect(jsonPath("$.message").value("Successfully created a DM channel"))
+                .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
     }
 
 }
