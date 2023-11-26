@@ -31,11 +31,11 @@ public class GroupChannel extends Channel{
     @JoinColumn(name = "creator_id")
     private User creator;
 
-    @Size(max = 10, message = "A group DM can have at most 10 users.")
+    @Size(max = 10, message = "A group channel can have at most 10 users.")
     @ManyToMany
     @JoinTable(
-        name = "dm_channel_user",
-        joinColumns = @JoinColumn(name = "dm_channel_id"),
+        name = "group_channel_user",
+        joinColumns = @JoinColumn(name = "group_channel_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private List<User> users;
