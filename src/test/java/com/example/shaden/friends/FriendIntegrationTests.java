@@ -99,7 +99,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(1)
     public void testSentFriendRequest() throws Exception {
-        String uri = "/api/friends/add";
+        String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setUsername(testFriendUser2.getUsername());
@@ -118,7 +118,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(2)
     public void testUser1SentFriendRequestToNonExistingUser() throws Exception {
-        String uri = "/api/friends/add";
+        String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setUsername("nonExistingUser");
@@ -136,7 +136,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(3)
     public void testFriend2AcceptsFriend1FriendRequest() throws Exception {
-        String uri = "/api/friends/" + testFriendUser1.getId() + "/accept";
+        String uri = "/api/friends/requests/" + testFriendUser1.getId() + "/accept";
 
         mockMvc.perform(MockMvcRequestBuilders.patch(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken2)
@@ -196,7 +196,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(7)
     public void testFriend1SendsFriendRequestToFriend3() throws Exception {
-        String uri = "/api/friends/add";
+        String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setUsername(testFriendUser3.getUsername());
@@ -251,7 +251,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(10)
     public void testFriend3DeclinesFriendRequestFromFriend1() throws Exception {
-        String uri = "/api/friends/" + testFriendUser1.getId() + "/reject";
+        String uri = "/api/friends/requests/" + testFriendUser1.getId() + "/reject";
 
         mockMvc.perform(MockMvcRequestBuilders.patch(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken3)
@@ -265,7 +265,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(11)
     public void testResentFriendRequestFromFriend1ToFriend3() throws Exception {
-        String uri = "/api/friends/add";
+        String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setUsername(testFriendUser3.getUsername());
@@ -297,7 +297,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(13)
     public void testResentFriendRequestFromFriend1ToFriend3AfterCanceling() throws Exception {
-        String uri = "/api/friends/add";
+        String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
         friendRequest.setUsername(testFriendUser3.getUsername());
@@ -315,7 +315,7 @@ public class FriendIntegrationTests {
     @Test
     @Order(14)
     public void testFriend3AcceptsFriend1FriendRequest() throws Exception {
-        String uri = "/api/friends/" + testFriendUser1.getId() + "/accept";
+        String uri = "/api/friends/requests/" + testFriendUser1.getId() + "/accept";
 
         mockMvc.perform(MockMvcRequestBuilders.patch(uri)
                 .header("Authorization", "Bearer " + testFriendUserToken3)

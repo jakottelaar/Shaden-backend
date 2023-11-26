@@ -23,7 +23,7 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/add")
+    @PostMapping("/requests")
     public ResponseEntity<ResponseData> sentFriendRequest(@RequestBody FriendRequest friendRequest) {
         String username = friendRequest.getUsername();
         friendService.sentFriendRequest(username);
@@ -65,7 +65,7 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
-    @PatchMapping("/{friendId}/accept")
+    @PatchMapping("/requests/{friendId}/accept")
     public ResponseEntity<ResponseData> acceptFriend(@PathVariable Long friendId) {
         friendService.acceptFriend(friendId);
 
@@ -76,7 +76,7 @@ public class FriendController {
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
-    @PatchMapping("/{friendId}/reject")
+    @PatchMapping("/requests/{friendId}/reject")
     public ResponseEntity<ResponseData> rejectFriend(@PathVariable Long friendId) {
         friendService.rejectFriend(friendId);
 
