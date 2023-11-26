@@ -40,7 +40,7 @@ public class DMChannelController {
         
         ResponseData response = ResponseData.builder()
         .statusCode(HttpStatus.OK.value())
-        .message("Successfully retrieved a DM channel")
+        .message("Successfully retrieved DM channel")
         .results(dmChannelService.getDMChannelWithId(channelId))
         .build();
 

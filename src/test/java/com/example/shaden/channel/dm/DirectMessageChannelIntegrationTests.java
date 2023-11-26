@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.shaden.features.authentication.AuthenticationService;
@@ -28,6 +29,8 @@ import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -56,6 +59,7 @@ public class DirectMessageChannelIntegrationTests {
     private static String testUserToken2;
     private static User testFriend1;
     private static User testFriend2;
+    private static Long testDmChannelId1;
 
     @BeforeAll
     public void setup() throws Exception {
@@ -91,7 +95,7 @@ public class DirectMessageChannelIntegrationTests {
         CreateDmChannelRequest request = new CreateDmChannelRequest();
         request.setUserId(testFriend2.getId());
 
-        mockMvc.perform(MockMvcRequestBuilders.post(uri)
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
                 .content(gson.toJson(request))
                 .contentType(MediaType.APPLICATION_JSON))
@@ -99,13 +103,34 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.status").value(201))
                 .andExpect(jsonPath("$.message").value("Successfully created a DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andReturn();
+
+        String jsonResponse = result.getResponse().getContentAsString();
+        JsonObject parsedResponse = JsonParser.parseString(jsonResponse).getAsJsonObject();
+
+        testDmChannelId1 = parsedResponse.get("results").getAsJsonObject().get("channel_id").getAsLong();
     }
 
     @Test
     @Order(2)
     public void Get_dm_channel_with_user_id() throws Exception {
         String uri = "/api/dm-channels/user/" + testFriend2.getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                .header("Authorization", "Bearer " + testUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
+                .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+    }
+
+    @Test
+    @Order(3)
+    public void Get_dm_channel_with_id() throws Exception {
+        String uri = "/api/dm-channels/" + testDmChannelId1;
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
