@@ -53,7 +53,7 @@ public class AuthIntegrationTest {
     //Test account registration
     @Test
     @Order(1)
-    public void accountRegistrationTest() throws Exception {
+    public void Successful_account_registration() throws Exception {
         RegisterRequest registerRequest = new RegisterRequest();
         registerRequest.setUsername("authTestUsername");
         registerRequest.setEmail("authtest@mail.com");
@@ -74,7 +74,7 @@ public class AuthIntegrationTest {
 // Test invalid input for account registration
 @Test
 @Order(2)
-public void invalidInputAccountRegistration() throws Exception {
+public void Invalid_input_account_registration() throws Exception {
     RegisterRequest registerRequest = new RegisterRequest();
     registerRequest.setUsername("");
     registerRequest.setEmail("testmail.com");
@@ -98,7 +98,7 @@ public void invalidInputAccountRegistration() throws Exception {
 // Test account registration with email that already exists
 @Test
 @Order(3)
-public void accountWithEmailAlreadyExists() throws Exception {
+public void Account_registration_with_email_that_already_exists() throws Exception {
     RegisterRequest registerRequest = new RegisterRequest();
     registerRequest.setUsername("authTestUsername");
     registerRequest.setEmail("authtest@mail.com");
@@ -115,7 +115,7 @@ public void accountWithEmailAlreadyExists() throws Exception {
 // Test login
 @Test
 @Order(4)
-public void testLogin() throws Exception {
+public void Successful_login() throws Exception {
     AuthenticationRequest authenticationRequest = new AuthenticationRequest();
     authenticationRequest.setEmail("authtest@mail.com");
     authenticationRequest.setPassword("Testpass1234");
@@ -140,7 +140,7 @@ public void testLogin() throws Exception {
 // Test invalid credentials login
 @Test
 @Order(5)
-public void testInvalidCredentialsLogin() throws Exception {
+public void Invalid_credentials_login() throws Exception {
     AuthenticationRequest authenticationRequest = new AuthenticationRequest();
     authenticationRequest.setEmail("authtest@mail.com");
     authenticationRequest.setPassword("Testpass1");
@@ -156,7 +156,7 @@ public void testInvalidCredentialsLogin() throws Exception {
 // Test refresh token
 @Test
 @Order(6)
-public void testRefreshToken() throws Exception {
+public void Get_refresh_token() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.post("/api/auth/refresh-token")
             .header("Authorization", "Bearer " + refreshToken)
             .contentType(MediaType.APPLICATION_JSON))

@@ -35,7 +35,7 @@ public class FriendControllerUnitTests {
     private FriendService friendService;
 
     @Test
-    public void testAddFriendEndpoint() {
+    public void Add_friend_endpoint() {
         Mockito.doNothing().when(friendService).sentFriendRequest(any(String.class));
 
         FriendRequest friendRequest = new FriendRequest("TestFriend");
@@ -50,7 +50,7 @@ public class FriendControllerUnitTests {
     }
 
     @Test
-    public void testGetAllFriendsEndpoint() {
+    public void Get_all_friends_endpoint() {
         List<FriendResponse> friendResponses = new ArrayList<>();
 
         Mockito.when(friendService.getAllFriends()).thenReturn(friendResponses);
@@ -66,7 +66,7 @@ public class FriendControllerUnitTests {
     }
 
     @Test
-    public void testGetFriendByIdEndpoint() {
+    public void Get_friend_by_id_endpoint() {
         Long friendId = 1L;
         FriendResponse friendResponse = new FriendResponse(friendId, "TestFriend", FriendshipStatus.ACCEPTED);
 

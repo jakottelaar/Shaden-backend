@@ -64,7 +64,7 @@ public class UserIntegrationTests {
 
     @Test
     @Order(1)
-    public void testGetUserProfile() throws Exception {
+    public void Get_user_profile() throws Exception {
     mockMvc.perform(MockMvcRequestBuilders.get("/api/users/profile")
                 .header("Authorization", "Bearer " + accessTokenUser1))
                 .andExpect(status().isOk())
@@ -76,7 +76,7 @@ public class UserIntegrationTests {
 
     @Test
     @Order(2)
-    public void testUser2SearchUser1() throws Exception {
+    public void User2_searches_user1() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search?username=testUser1")
                 .header("Authorization", "Bearer " + accessTokenUser2))
                 .andExpect(status().isOk())
@@ -88,7 +88,7 @@ public class UserIntegrationTests {
 
     @Test
     @Order(3)
-    public void testUser1SearchAllUsers() throws Exception {
+    public void User1_searches_other_users() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/api/users/search?username=testUser")
                 .header("Authorization", "Bearer " + accessTokenUser1))
                 .andExpect(status().isOk())
@@ -102,7 +102,7 @@ public class UserIntegrationTests {
 
      @Test
      @Order(4)
-     public void testUpdateUserProfile() throws Exception {
+     public void Update_profile() throws Exception {
         String jsonRequest = "{\"username\":\"testUser1Changed\",\"email\":\"test1changed@mail.com\"}";
 
         mockMvc.perform(MockMvcRequestBuilders.patch("/api/users/profile")
@@ -118,7 +118,7 @@ public class UserIntegrationTests {
 
      @Test
      @Order(5)
-     public void testDeleteUserAccount() throws Exception {
+     public void Delete_account() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/profile")
                 .header("Authorization", "Bearer " + accessTokenUser1))
                 .andExpect(status().isOk())

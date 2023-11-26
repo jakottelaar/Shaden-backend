@@ -35,7 +35,7 @@ public class AuthControllerUnitTests {
     private AuthenticationService authService;
     
     @Test
-    public void testRegisterUserEndpoint() {
+    public void Register_user_endpoint() {
 
         RegisterRequest registerRequest = RegisterRequest.builder()
             .username("test")
@@ -52,7 +52,7 @@ public class AuthControllerUnitTests {
     }
 
     @Test
-    public void testLoginUserEndpoint() {
+    public void Login_user_endpoint() {
 
         AuthenticationRequest authRequest = AuthenticationRequest.builder()
         .email("test@mail.com")
@@ -68,7 +68,7 @@ public class AuthControllerUnitTests {
     }
 
     @Test
-    public void testRefreshTokenEndpoint() throws IOException {
+    public void Refresh_token_endpoint() throws IOException {
         AuthenticationResponse authResponse = new AuthenticationResponse("token", "user");
 
         MockHttpServletRequest request = new MockHttpServletRequest();

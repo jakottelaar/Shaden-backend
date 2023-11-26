@@ -98,7 +98,7 @@ public class FriendIntegrationTests {
     // User 1 sends friend request to user 2
     @Test
     @Order(1)
-    public void testSentFriendRequest() throws Exception {
+    public void Sent_friend_request_from_friend1_to_friend2() throws Exception {
         String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
@@ -117,7 +117,7 @@ public class FriendIntegrationTests {
     // User 1 sends friend request to non-existing user
     @Test
     @Order(2)
-    public void testUser1SentFriendRequestToNonExistingUser() throws Exception {
+    public void test_Sent_friend_request_from_user1_to_non_existing_user() throws Exception {
         String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
@@ -135,7 +135,7 @@ public class FriendIntegrationTests {
     // User 2 accepts friend request from user 1
     @Test
     @Order(3)
-    public void testFriend2AcceptsFriend1FriendRequest() throws Exception {
+    public void test_Friend2_accepts_friend_request_from_friend1() throws Exception {
         String uri = "/api/friends/requests/" + testFriendUser1.getId() + "/accept";
 
         mockMvc.perform(MockMvcRequestBuilders.patch(uri)
@@ -149,7 +149,7 @@ public class FriendIntegrationTests {
     // User 1 fetches friends list and asserts it only contains accepted friends
     @Test
     @Order(4)
-    public void testFriend1FetchesFriendsList() throws Exception {
+    public void test_Friend1_fetches_friends_list() throws Exception {
         String uri = "/api/friends/list";
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -166,7 +166,7 @@ public class FriendIntegrationTests {
     // User 1 fetches friend 2 by id and asserts the friendship is accepted
     @Test
     @Order(5)
-    public void testFriend1FetchesFriendById() throws Exception {
+    public void test_Friend1_fetches_friend_by_id() throws Exception {
         String uri = "/api/friends/" + testFriendUser2.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -181,7 +181,7 @@ public class FriendIntegrationTests {
     // User 1 removes friend 2
     @Test
     @Order(6)
-    public void testFriend1RemovesFriend2() throws Exception {
+    public void test_Friend1_removes_friend2() throws Exception {
         String uri = "/api/friends/" + testFriendUser2.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.delete(uri)
@@ -195,7 +195,7 @@ public class FriendIntegrationTests {
     // User 1 sends friend request to user 3
     @Test
     @Order(7)
-    public void testFriend1SendsFriendRequestToFriend3() throws Exception {
+    public void test_Sent_friend_request_from_friend1_to_friend3() throws Exception {
         String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
@@ -214,7 +214,7 @@ public class FriendIntegrationTests {
     // User 1 fetches all pending friend requests and asserts it contains the friend request sent to user 3
     @Test
     @Order(8)
-    public void testFriend1GetAllPendingFriendRequests() throws Exception {
+    public void test_Friend1_gets_all_pending_friend_requests() throws Exception {
         String uri = "/api/friends/pending";
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -232,7 +232,7 @@ public class FriendIntegrationTests {
     // User 3 fetches all pending friend requests and asserts it contains the friend request sent to user 3
     @Test
     @Order(9)
-    public void testFriend3GetAllPendingFriendRequests() throws Exception {
+    public void test_Friend3_gets_all_pending_friend_requests() throws Exception {
         String uri = "/api/friends/pending";
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
@@ -250,7 +250,7 @@ public class FriendIntegrationTests {
     // User 3 declines friend request from user 1
     @Test
     @Order(10)
-    public void testFriend3DeclinesFriendRequestFromFriend1() throws Exception {
+    public void test_Friend3_declines_friend_request_from_friend1() throws Exception {
         String uri = "/api/friends/requests/" + testFriendUser1.getId() + "/reject";
 
         mockMvc.perform(MockMvcRequestBuilders.patch(uri)
@@ -264,7 +264,7 @@ public class FriendIntegrationTests {
     // User 1 resends friend request to user 3
     @Test
     @Order(11)
-    public void testResentFriendRequestFromFriend1ToFriend3() throws Exception {
+    public void test_Resent_friend_request_from_friend1_to_friend3() throws Exception {
         String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
@@ -282,7 +282,7 @@ public class FriendIntegrationTests {
     // User 1 cancels friend request to user 3
     @Test
     @Order(12)
-    public void testFriend1CancelsFriendRequestToFriend3() throws Exception {
+    public void test_Friend1_cancels_friend_request_to_friend3() throws Exception {
         String uri = "/api/friends/" + testFriendUser3.getId() + "/cancel";
 
         mockMvc.perform(MockMvcRequestBuilders.delete(uri)
@@ -296,7 +296,7 @@ public class FriendIntegrationTests {
     // User 1 resends friend request to user 3 after canceling
     @Test
     @Order(13)
-    public void testResentFriendRequestFromFriend1ToFriend3AfterCanceling() throws Exception {
+    public void test_Resent_friend_request_from_friend1_to_friend3_after_canceling() throws Exception {
         String uri = "/api/friends/requests";
 
         FriendRequest friendRequest = new FriendRequest();
@@ -314,7 +314,7 @@ public class FriendIntegrationTests {
     // User 3 accepts friend request from user 1
     @Test
     @Order(14)
-    public void testFriend3AcceptsFriend1FriendRequest() throws Exception {
+    public void test_Friend3_accepts_friend_request_from_friend1() throws Exception {
         String uri = "/api/friends/requests/" + testFriendUser1.getId() + "/accept";
 
         mockMvc.perform(MockMvcRequestBuilders.patch(uri)
@@ -328,7 +328,7 @@ public class FriendIntegrationTests {
     // User 1 removes friend 3
     @Test
     @Order(15)
-    public void testRemoveFriend1RemovesFriend3() throws Exception {
+    public void test_Remove_friend1_removes_friend3() throws Exception {
         String uri = "/api/friends/" + testFriendUser3.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.delete(uri)

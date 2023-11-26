@@ -36,7 +36,7 @@ public class AuthServiceUnitTests {
     private PasswordEncoder passwordEncoder;
 
     @Test
-    public void testRegisterUser() {
+    public void Register_user_service() {
         Mockito.when(passwordEncoder.encode(Mockito.anyString())).thenReturn("encodedPassword");
 
         RegisterRequest registerRequest = RegisterRequest.builder()
@@ -53,7 +53,7 @@ public class AuthServiceUnitTests {
     }
 
     @Test
-    public void testDuplicateEmail() {
+    public void Duplicate_email_error_service() {
         Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
 
         RegisterRequest registerRequest = RegisterRequest.builder()
@@ -66,7 +66,7 @@ public class AuthServiceUnitTests {
     }
 
     @Test
-    public void testValidRegistration() {
+    public void Valid_registration_attempt_service() {
         Mockito.when(userRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
         Mockito.when(userRepository.existsByUsername(Mockito.anyString())).thenReturn(false);
         
