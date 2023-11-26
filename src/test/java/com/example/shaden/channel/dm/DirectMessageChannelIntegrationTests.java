@@ -85,7 +85,7 @@ public class DirectMessageChannelIntegrationTests {
 
     @Test
     @Order(1)
-    public void createDMChannel() throws Exception {
+    public void Create_dm_channel() throws Exception {
         String uri = "/api/dm-channels";
 
         CreateDmChannelRequest request = new CreateDmChannelRequest();
@@ -98,6 +98,21 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value(201))
                 .andExpect(jsonPath("$.message").value("Successfully created a DM channel"))
+                .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+    }
+
+    @Test
+    @Order(2)
+    public void Get_dm_channel_with_user_id() throws Exception {
+        String uri = "/api/dm-channels/user/" + testFriend2.getId();
+
+        mockMvc.perform(MockMvcRequestBuilders.get(uri)
+                .header("Authorization", "Bearer " + testUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
                 .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
     }
