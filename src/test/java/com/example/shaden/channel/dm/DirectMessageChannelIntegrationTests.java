@@ -142,4 +142,17 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
     }
 
+    @Test
+    @Order(4)
+    public void Delete_dm_channel_with_id() throws Exception {
+        String uri = "/api/dm-channels/" + testDmChannelId1;
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(uri)
+                .header("Authorization", "Bearer " + testUserToken1)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value(200))
+                .andExpect(jsonPath("$.message").value("Successfully deleted a DM channel"));
+    }
+
 }
