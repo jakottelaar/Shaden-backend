@@ -107,4 +107,16 @@ public class DMChannelService {
 
         return response;
     }
+
+    public void deleteDMChannelWithId(Long channelId) {
+        
+        Optional<DMChannel> dmChannel = dmChannelRepository.findById(channelId);
+
+        if (dmChannel.isEmpty()) {
+            throw new ResourceNotFoundException("DM channel not found");
+        }
+
+        dmChannelRepository.deleteById(channelId);
+
+    }
 }
