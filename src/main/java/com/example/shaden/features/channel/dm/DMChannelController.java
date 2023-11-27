@@ -16,7 +16,7 @@ import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/dm-channels")
+@RequestMapping("/api/channels/direct")
 @RequiredArgsConstructor
 public class DMChannelController {
     

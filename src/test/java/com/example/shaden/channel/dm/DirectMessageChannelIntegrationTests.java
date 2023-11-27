@@ -90,7 +90,7 @@ public class DirectMessageChannelIntegrationTests {
     @Test
     @Order(1)
     public void Create_dm_channel() throws Exception {
-        String uri = "/api/dm-channels";
+        String uri = "/api/channels/direct";
 
         CreateDmChannelRequest request = new CreateDmChannelRequest();
         request.setUserId(testFriend2.getId());
@@ -115,7 +115,7 @@ public class DirectMessageChannelIntegrationTests {
     @Test
     @Order(2)
     public void Get_dm_channel_with_user_id() throws Exception {
-        String uri = "/api/dm-channels/user/" + testFriend2.getId();
+        String uri = "/api/channels/direct/user/" + testFriend2.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
@@ -130,7 +130,7 @@ public class DirectMessageChannelIntegrationTests {
     @Test
     @Order(3)
     public void Get_dm_channel_with_id() throws Exception {
-        String uri = "/api/dm-channels/" + testDmChannelId1;
+        String uri = "/api/channels/direct/" + testDmChannelId1;
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
@@ -145,7 +145,7 @@ public class DirectMessageChannelIntegrationTests {
     @Test
     @Order(4)
     public void Delete_dm_channel_with_id() throws Exception {
-        String uri = "/api/dm-channels/" + testDmChannelId1;
+        String uri = "/api/channels/direct/" + testDmChannelId1;
 
         mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
