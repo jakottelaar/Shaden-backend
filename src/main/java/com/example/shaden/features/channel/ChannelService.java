@@ -39,6 +39,7 @@ public class ChannelService {
             .channelId(dmChannel.getId())
             .user1Id(dmChannel.getUser1().getId())
             .user2Id(dmChannel.getUser2().getId())
+            .channelType(dmChannel.getChannelType().toString())
             .build()
         ).toList();
 
@@ -54,6 +55,7 @@ public class ChannelService {
                 .email(user.getEmail())
                 .build())
                 .toList())
+            .channelType(groupChannel.getChannelType().toString())
             .build()
         ).toList();
 
