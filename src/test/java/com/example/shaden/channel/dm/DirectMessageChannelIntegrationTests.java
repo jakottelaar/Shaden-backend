@@ -104,6 +104,7 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.message").value("Successfully created a DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
                 .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.channel_type").value("DIRECT"))
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
@@ -124,7 +125,8 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.channel_type").value("DIRECT"));
     }
 
     @Test
@@ -139,7 +141,8 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.channel_type").value("DIRECT"));
     }
 
     @Test
