@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
+import com.example.shaden.features.channel.ChannelType;
 import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import com.example.shaden.features.channel.dm.response.DMChannelResponse;
 import com.example.shaden.features.user.User;
@@ -51,6 +52,8 @@ public class DMChannelService {
         .user2(user2)
         .build();
 
+        dmChannel.setChannelType(ChannelType.DIRECT);
+
         dmChannel.setCreatedDate(LocalDateTime.now());
 
         dmChannelRepository.save(dmChannel);
@@ -59,6 +62,7 @@ public class DMChannelService {
         .channelId(dmChannel.getId())
         .user1Id(user1.getId())
         .user2Id(user2.getId())
+        .channelType(dmChannel.getChannelType().toString())
         .build();
 
     }
@@ -75,6 +79,7 @@ public class DMChannelService {
         .channelId(dmChannel.get().getId())
         .user1Id(dmChannel.get().getUser1().getId())
         .user2Id(dmChannel.get().getUser2().getId())
+        .channelType(dmChannel.get().getChannelType().toString())
         .build();
 
         return response;
@@ -103,6 +108,7 @@ public class DMChannelService {
         .channelId(dmChannel.getId())
         .user1Id(dmChannel.getUser1().getId())
         .user2Id(dmChannel.getUser2().getId())
+        .channelType(dmChannel.getChannelType().toString())
         .build();
 
         return response;
