@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -27,5 +29,9 @@ public abstract class Channel {
 
     @Column(name = "last_modified_date")
     private LocalDateTime lastModifiedDate;
+
+    @Column(name = "channel_type")
+    @Enumerated(EnumType.STRING)
+    private ChannelType channelType;
 
 }
