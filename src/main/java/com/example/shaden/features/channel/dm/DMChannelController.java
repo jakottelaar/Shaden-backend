@@ -61,6 +61,19 @@ public class DMChannelController {
 
     }
 
+    @GetMapping
+    public ResponseEntity<ResponseData> getAllDMChannels() {
+        
+        ResponseData response = ResponseData.builder()
+        .statusCode(HttpStatus.OK.value())
+        .message("Successfully retrieved DM channels")
+        .results(dmChannelService.getAllDMChannels())
+        .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
     @DeleteMapping("/{channelId}")
     public ResponseEntity<ResponseData> deleteDMChannelWithId(@PathVariable Long channelId) {
         

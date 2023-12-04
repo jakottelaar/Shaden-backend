@@ -1,6 +1,7 @@
 package com.example.shaden.features.channel.dm;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -123,6 +124,28 @@ public class DMChannelService {
         }
 
         dmChannelRepository.deleteById(channelId);
+
+    }
+
+    public List<DMChannelResponse> getAllDMChannels() {
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+
+        long userId1 = userPrincipal.getUserId();
+
+        List<DMChannel> dmChannels = dmChannelRepository.findAllByUserId(userId1);
+
+        List<DMChannelResponse> convertedDmChannels = dmChannels.stream().map(dmChannel -> 
+            DMChannelResponse.builder()
+            .channelId(dmChannel.getId())
+            .user1Id(dmChannel.getUser1().getId())
+            .user2Id(dmChannel.getUser2().getId())
+            .channelType(dmChannel.getChannelType().toString())
+            .build()
+        ).toList();
+
+        return convertedDmChannels;
 
     }
 }
