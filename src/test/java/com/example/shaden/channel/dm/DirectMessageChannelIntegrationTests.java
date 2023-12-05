@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -66,15 +67,18 @@ public class DirectMessageChannelIntegrationTests {
         // Create test users
         RegisterRequest testUser1 = new RegisterRequest("testUser1", "testuser1@mail.com", "testMan1");
         RegisterRequest testUser2 = new RegisterRequest("testUser2", "testuser2@mail.com", "testMan2");
-        authenticationService.register(testUser1);
-        authenticationService.register(testUser2);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+    
+        authenticationService.register(testUser1, response);
+        authenticationService.register(testUser2, response);
 
         // Authenticate test users
         AuthenticationRequest authenticationRequestUser1 = new AuthenticationRequest("testuser1@mail.com", "testMan1");
         AuthenticationRequest authenticationRequestUser2 = new AuthenticationRequest("testuser2@mail.com", "testMan2");
 
-        testUserToken1 = authenticationService.authenticate(authenticationRequestUser1).getAccessToken();
-        testUserToken2 = authenticationService.authenticate(authenticationRequestUser2).getAccessToken();
+        testUserToken1 = authenticationService.authenticate(authenticationRequestUser1, response).getAccessToken();
+        testUserToken2 = authenticationService.authenticate(authenticationRequestUser2, response).getAccessToken();
 
         // Retrieve test users from the repository
         testFriend1 = userRepository.findByEmail("testuser1@mail.com").orElse(null);
