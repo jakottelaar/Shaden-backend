@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -45,7 +46,9 @@ public class AuthServiceUnitTests {
                 .password("Testpass1234")
                 .build();
 
-        authService.register(registerRequest);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        authService.register(registerRequest, response);
 
         Mockito.verify(passwordEncoder, Mockito.times(1)).encode("Testpass1234");
 
@@ -62,7 +65,9 @@ public class AuthServiceUnitTests {
                 .password("Testpass1234")
                 .build();
 
-        assertThrows(DuplicateDataException.class, () -> authService.register(registerRequest));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        assertThrows(DuplicateDataException.class, () -> authService.register(registerRequest, response));
     }
 
     @Test
@@ -76,11 +81,13 @@ public class AuthServiceUnitTests {
                 .password("Testpass1234")
                 .build();
 
-        AuthenticationResponse response = authService.register(registerRequest);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        AuthenticationResponse authResponse = authService.register(registerRequest, response);
 
         Mockito.verify(passwordEncoder, Mockito.times(1)).encode("Testpass1234");
 
-        assertNotNull(response);
+        assertNotNull(authResponse);
     }
 
 
