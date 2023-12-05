@@ -24,6 +24,8 @@ import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.authentication.response.AuthenticationResponse;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -48,7 +50,7 @@ public class AuthControllerUnitTests {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        when(authService.register(any(RegisterRequest.class), response)).thenReturn(authResponse);
+        when(authService.register(any(RegisterRequest.class), any(HttpServletResponse.class))).thenReturn(authResponse);
 
         ResponseEntity<?> responseEntity = authController.register(registerRequest, response);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
@@ -66,7 +68,8 @@ public class AuthControllerUnitTests {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        when(authService.authenticate(any(AuthenticationRequest.class), response)).thenReturn(authResponse);
+        when(authService.authenticate(any(AuthenticationRequest.class), any(HttpServletResponse.class)))
+            .thenReturn(authResponse);
 
         ResponseEntity<ResponseData> responseEntity = authController.login(authRequest, response);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
