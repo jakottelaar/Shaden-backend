@@ -17,6 +17,7 @@ import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.authentication.response.AuthenticationResponse;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -30,37 +31,37 @@ public class AuthenticationController {
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 
     @PostMapping(value = "/register")
-    public ResponseEntity<ResponseData> register(@Valid @RequestBody RegisterRequest request) {
-        AuthenticationResponse response = authService.register(request);
+    public ResponseEntity<ResponseData> register(@Valid @RequestBody RegisterRequest request, HttpServletResponse response) {
+        AuthenticationResponse authResponse = authService.register(request, response);
         
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.CREATED.value());
         responseData.setMessage("User registered successfully");
-        responseData.setResults(response);
+        responseData.setResults(authResponse);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(responseData);
     }
 
     @PostMapping(value = "/login")
-    public ResponseEntity<ResponseData> login(@Valid @RequestBody AuthenticationRequest request) {
+    public ResponseEntity<ResponseData> login(@Valid @RequestBody AuthenticationRequest request, HttpServletResponse response) {
         LOGGER.info("Login controller endpoint called.");
-        AuthenticationResponse response = authService.authenticate(request);
+        AuthenticationResponse authResponse = authService.authenticate(request, response);
 
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("User authenticated successfully");
-        responseData.setResults(response);
+        responseData.setResults(authResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
 
     @PostMapping(value = "/refresh-token")
-    public ResponseEntity<ResponseData> refreshToken(HttpServletRequest request) throws IOException {
-        AuthenticationResponse response = authService.refreshToken(request);
+    public ResponseEntity<ResponseData> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        AuthenticationResponse authResponse = authService.refreshToken(request, response);
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("Token refreshed successfully");
-        responseData.setResults(response);
+        responseData.setResults(authResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }

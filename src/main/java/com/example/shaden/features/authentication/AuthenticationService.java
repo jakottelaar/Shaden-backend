@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -21,7 +22,10 @@ import com.example.shaden.features.user.Role;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserPrincipal;
 import com.example.shaden.features.user.UserRepository;
+
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,9 +37,12 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
 
-    public AuthenticationResponse register(RegisterRequest request) {
+    public AuthenticationResponse register(RegisterRequest request, HttpServletResponse response) {
         LOGGER.info("Registering user");
 
         if (repository.existsByEmail(request.getEmail())) {
@@ -59,14 +66,22 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(userPrincipal, Optional.of(user));
         var refreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user));
-        return AuthenticationResponse
-        .builder()
-        .accessToken(jwtToken)
-        .refreshToken(refreshToken)
-        .build();
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge((int) (refreshExpiration / 1000));
+        refreshTokenCookie.setPath("/");
+        
+        AuthenticationResponse authResponse = AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .build();
+
+        response.addCookie(refreshTokenCookie);
+
+        return authResponse;
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public AuthenticationResponse authenticate(AuthenticationRequest request, HttpServletResponse response) {
         LOGGER.info("Authenticating user");
     
         try {
@@ -85,14 +100,22 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(userPrincipal, Optional.of(user.get()));
         var refreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user.get()));
-        return AuthenticationResponse
-        .builder()
-        .accessToken(jwtToken)
-        .refreshToken(refreshToken)
-        .build();
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge((int) (refreshExpiration / 1000));
+        refreshTokenCookie.setPath("/");
+
+        AuthenticationResponse authResponse = AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .build();
+
+        response.addCookie(refreshTokenCookie);
+
+        return authResponse;
     }
 
-    public AuthenticationResponse refreshToken(HttpServletRequest request) {
+    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
         LOGGER.info("Refreshing token");
         final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         final String refreshToken;
@@ -114,12 +137,18 @@ public class AuthenticationService {
             if (jwtService.isTokenValid(refreshToken, userPrincipal)) {
                 var accessToken = jwtService.generateToken(userPrincipal, Optional.of(user));
                 var newRefreshToken = jwtService.generateRefreshToken(userPrincipal, Optional.of(user));
+
+                Cookie refreshTokenCookie = new Cookie("refresh_token", newRefreshToken);
+                refreshTokenCookie.setHttpOnly(true);
+                refreshTokenCookie.setMaxAge((int) (refreshExpiration / 1000));
+                refreshTokenCookie.setPath("/");
+
+                response.addCookie(refreshTokenCookie);
                 
                 LOGGER.info("Token refreshed successfully");
 
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)
-                        .refreshToken(newRefreshToken)
                         .build();
             }
         }
