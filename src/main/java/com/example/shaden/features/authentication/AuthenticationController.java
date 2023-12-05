@@ -6,11 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.shaden.exception.custom.UnauthorizedException;
 import com.example.shaden.features.ResponseData;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
@@ -56,8 +58,12 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/refresh-token")
-    public ResponseEntity<ResponseData> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        AuthenticationResponse authResponse = authService.refreshToken(request, response);
+    public ResponseEntity<ResponseData> refreshToken(@CookieValue(name = "refresh_token", required = false) String refreshToken, HttpServletResponse response) throws IOException {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new UnauthorizedException("Refresh token is missing");
+        }
+
+        AuthenticationResponse authResponse = authService.refreshToken(refreshToken, response);
         ResponseData responseData = new ResponseData();
         responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("Token refreshed successfully");

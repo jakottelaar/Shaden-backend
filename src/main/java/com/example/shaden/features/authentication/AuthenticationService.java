@@ -115,17 +115,10 @@ public class AuthenticationService {
         return authResponse;
     }
 
-    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public AuthenticationResponse refreshToken(String refreshToken, HttpServletResponse response) {
         LOGGER.info("Refreshing token");
-        final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        final String refreshToken;
         final Long userId;
-    
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            throw new ResourceNotFoundException("No authorization header or refresh token");
-        }
-    
-        refreshToken = authorizationHeader.substring(7);
+        
         userId = jwtService.extractUserId(refreshToken);
     
         if (userId != null) {
