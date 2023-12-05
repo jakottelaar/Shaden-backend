@@ -18,7 +18,6 @@ import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.authentication.response.AuthenticationResponse;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

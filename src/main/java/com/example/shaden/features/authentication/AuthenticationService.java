@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +23,6 @@ import com.example.shaden.features.user.UserPrincipal;
 import com.example.shaden.features.user.UserRepository;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -118,7 +116,7 @@ public class AuthenticationService {
     public AuthenticationResponse refreshToken(String refreshToken, HttpServletResponse response) {
         LOGGER.info("Refreshing token");
         final Long userId;
-        
+
         userId = jwtService.extractUserId(refreshToken);
     
         if (userId != null) {
