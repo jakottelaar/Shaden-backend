@@ -67,6 +67,7 @@ public class AuthenticationService {
 
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
         refreshTokenCookie.setMaxAge((int) (refreshExpiration / 1000));
         refreshTokenCookie.setPath("/");
         
@@ -101,6 +102,7 @@ public class AuthenticationService {
 
         Cookie refreshTokenCookie = new Cookie("refresh_token", refreshToken);
         refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
         refreshTokenCookie.setMaxAge((int) (refreshExpiration / 1000));
         refreshTokenCookie.setPath("/");
 
@@ -131,8 +133,10 @@ public class AuthenticationService {
 
                 Cookie refreshTokenCookie = new Cookie("refresh_token", newRefreshToken);
                 refreshTokenCookie.setHttpOnly(true);
+                refreshTokenCookie.setSecure(false);
                 refreshTokenCookie.setMaxAge((int) (refreshExpiration / 1000));
                 refreshTokenCookie.setPath("/");
+    
 
                 response.addCookie(refreshTokenCookie);
                 
