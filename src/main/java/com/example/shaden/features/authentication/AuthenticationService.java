@@ -23,6 +23,7 @@ import com.example.shaden.features.user.UserPrincipal;
 import com.example.shaden.features.user.UserRepository;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -149,6 +150,18 @@ public class AuthenticationService {
         }
         
         throw new ResourceNotFoundException("Invalid refresh token");
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response) {
+
+        Cookie refreshTokenCookie = new Cookie("refresh_token", null);
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(false);
+        refreshTokenCookie.setMaxAge(0);
+        refreshTokenCookie.setPath("/");
+        response.addCookie(refreshTokenCookie);
+
+        LOGGER.info("User logged out successfully");
     }
     
  

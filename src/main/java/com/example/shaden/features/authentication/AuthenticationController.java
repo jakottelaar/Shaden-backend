@@ -18,6 +18,7 @@ import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.authentication.response.AuthenticationResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -67,6 +68,16 @@ public class AuthenticationController {
         responseData.setStatusCode(HttpStatus.OK.value());
         responseData.setMessage("Token refreshed successfully");
         responseData.setResults(authResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(responseData);
+    }
+
+    @PostMapping(value = "/logout")
+    public ResponseEntity<ResponseData> logout(HttpServletRequest request, HttpServletResponse response) {
+        authService.logout(request, response);
+        ResponseData responseData = new ResponseData();
+        responseData.setStatusCode(HttpStatus.OK.value());
+        responseData.setMessage("User logged out successfully");
 
         return ResponseEntity.status(HttpStatus.OK).body(responseData);
     }
