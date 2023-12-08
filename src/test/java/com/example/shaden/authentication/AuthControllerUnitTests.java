@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.example.shaden.features.ResponseData;
@@ -22,6 +22,8 @@ import com.example.shaden.features.authentication.AuthenticationService;
 import com.example.shaden.features.authentication.request.AuthenticationRequest;
 import com.example.shaden.features.authentication.request.RegisterRequest;
 import com.example.shaden.features.authentication.response.AuthenticationResponse;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -43,11 +45,13 @@ public class AuthControllerUnitTests {
             .password("Testpass1234")
             .build();
 
-        AuthenticationResponse authResponse = new AuthenticationResponse("token", "user");
+        AuthenticationResponse authResponse = new AuthenticationResponse("token");
 
-        when(authService.register(any(RegisterRequest.class))).thenReturn(authResponse);
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ResponseEntity<?> responseEntity = authController.register(registerRequest);
+        when(authService.register(any(RegisterRequest.class), any(HttpServletResponse.class))).thenReturn(authResponse);
+
+        ResponseEntity<?> responseEntity = authController.register(registerRequest, response);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
     }
 
@@ -59,23 +63,27 @@ public class AuthControllerUnitTests {
         .password("Testpass1234")
         .build();
 
-        AuthenticationResponse authResponse = new AuthenticationResponse("token", "user");
+        AuthenticationResponse authResponse = new AuthenticationResponse("token");
 
-        when(authService.authenticate(any(AuthenticationRequest.class))).thenReturn(authResponse);
+        MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ResponseEntity<ResponseData> responseEntity = authController.login(authRequest);
+        when(authService.authenticate(any(AuthenticationRequest.class), any(HttpServletResponse.class)))
+            .thenReturn(authResponse);
+
+        ResponseEntity<ResponseData> responseEntity = authController.login(authRequest, response);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
     @Test
     public void Refresh_token_endpoint() throws IOException {
-        AuthenticationResponse authResponse = new AuthenticationResponse("token", "user");
+        AuthenticationResponse authResponse = new AuthenticationResponse("token");
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        String validRefreshToken = "validRefreshToken";
 
-        when(authService.refreshToken(request)).thenReturn(authResponse);
+        when(authService.refreshToken(validRefreshToken, response)).thenReturn(authResponse);
 
-        ResponseEntity<ResponseData> responseEntity = authController.refreshToken(request);
+        ResponseEntity<ResponseData> responseEntity = authController.refreshToken(validRefreshToken, response);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
     }
 
