@@ -9,7 +9,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -26,10 +25,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @Table(name = "group_channel")
 public class GroupChannel extends Channel{
-
-    @ManyToOne
-    @JoinColumn(name = "creator_id")
-    private User creator;
 
     @Size(max = 10, message = "A group channel can have at most 10 users.")
     @ManyToMany

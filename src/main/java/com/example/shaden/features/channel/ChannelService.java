@@ -37,8 +37,8 @@ public class ChannelService {
         List<DMChannelResponse> convertedDmChannels = dmChannels.stream().map(dmChannel -> 
             DMChannelResponse.builder()
             .channelId(dmChannel.getId())
-            .user1Id(dmChannel.getUser1().getId())
-            .user2Id(dmChannel.getUser2().getId())
+            .creatorId(dmChannel.getCreator().getId())
+            .participantId(dmChannel.getParticipant().getId())
             .channelType(dmChannel.getChannelType().toString())
             .build()
         ).toList();

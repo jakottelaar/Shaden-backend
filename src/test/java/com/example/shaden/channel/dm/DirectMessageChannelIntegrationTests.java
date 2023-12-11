@@ -106,8 +106,8 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status").value(201))
                 .andExpect(jsonPath("$.message").value("Successfully created a DM channel"))
-                .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.creator_id").value(testFriend1.getId()))
+                .andExpect(jsonPath("$.results.participant_id").value(testFriend2.getId()))
                 .andExpect(jsonPath("$.results.channel_type").value("DIRECT"))
                 .andReturn();
 
@@ -128,8 +128,8 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
-                .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.creator_id").value(testFriend1.getId()))
+                .andExpect(jsonPath("$.results.participant_id").value(testFriend2.getId()))
                 .andExpect(jsonPath("$.results.channel_type").value("DIRECT"));
     }
 
@@ -144,8 +144,8 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
-                .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.creator_id").value(testFriend1.getId()))
+                .andExpect(jsonPath("$.results.participant_id").value(testFriend2.getId()))
                 .andExpect(jsonPath("$.results.channel_type").value("DIRECT"));
     }
 
