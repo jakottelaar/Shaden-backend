@@ -32,37 +32,34 @@ public class DMChannelService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
 
-        long userId1 = userPrincipal.getUserId();
+        long creatorId = userPrincipal.getUserId();
 
-        User user1 = userRepository.findById(userId1).orElseThrow();
+        User creator = userRepository.findById(creatorId).orElseThrow();
 
-        User user2 = userRepository.findById(request.getUserId()).orElseThrow();
+        User participant = userRepository.findById(request.getUserId()).orElseThrow();
 
-        if (user1.getId() == user2.getId()) {
+        if (creator.getId() == participant.getId()) {
             throw new IllegalArgumentException("You can't create a DM channel with yourself");
         }
 
-        DMChannel existingDMChannel = dmChannelRepository.findDMChannelByUserIds(user1.getId(), user2.getId());
+        DMChannel existingDMChannel = dmChannelRepository.findDMChannelByUserIds(creator.getId(), participant.getId());
 
         if (existingDMChannel != null) {
             throw new IllegalArgumentException("You already have a DM channel with this user");
         }
 
-        DMChannel dmChannel = DMChannel.builder()
-        .user1(user1)
-        .user2(user2)
-        .build();
-
+        DMChannel dmChannel = new DMChannel();
+        dmChannel.setCreator(creator);
+        dmChannel.setParticipant(participant);
         dmChannel.setChannelType(ChannelType.DIRECT);
-
         dmChannel.setCreatedDate(LocalDateTime.now());
 
         dmChannelRepository.save(dmChannel);
 
         return DMChannelResponse.builder()
         .channelId(dmChannel.getId())
-        .user1Id(user1.getId())
-        .user2Id(user2.getId())
+        .creatorId(dmChannel.getCreator().getId())
+        .participantId(dmChannel.getParticipant().getId())
         .channelType(dmChannel.getChannelType().toString())
         .build();
 
@@ -78,8 +75,8 @@ public class DMChannelService {
 
         DMChannelResponse response = DMChannelResponse.builder()
         .channelId(dmChannel.get().getId())
-        .user1Id(dmChannel.get().getUser1().getId())
-        .user2Id(dmChannel.get().getUser2().getId())
+        .creatorId(dmChannel.get().getCreator().getId())
+        .participantId(dmChannel.get().getParticipant().getId())
         .channelType(dmChannel.get().getChannelType().toString())
         .build();
 
@@ -107,8 +104,8 @@ public class DMChannelService {
 
         DMChannelResponse response = DMChannelResponse.builder()
         .channelId(dmChannel.getId())
-        .user1Id(dmChannel.getUser1().getId())
-        .user2Id(dmChannel.getUser2().getId())
+        .creatorId(dmChannel.getCreator().getId())
+        .participantId(dmChannel.getParticipant().getId())
         .channelType(dmChannel.getChannelType().toString())
         .build();
 
@@ -139,8 +136,8 @@ public class DMChannelService {
         List<DMChannelResponse> convertedDmChannels = dmChannels.stream().map(dmChannel -> 
             DMChannelResponse.builder()
             .channelId(dmChannel.getId())
-            .user1Id(dmChannel.getUser1().getId())
-            .user2Id(dmChannel.getUser2().getId())
+            .creatorId(dmChannel.getCreator().getId())
+            .participantId(dmChannel.getParticipant().getId())
             .channelType(dmChannel.getChannelType().toString())
             .build()
         ).toList();

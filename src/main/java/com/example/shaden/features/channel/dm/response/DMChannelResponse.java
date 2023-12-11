@@ -13,10 +13,10 @@ public class DMChannelResponse {
     
     @JsonProperty("channel_id")
     private Long channelId;
-    @JsonProperty("user1_id")
-    private Long user1Id;
-    @JsonProperty("user2_id")
-    private Long user2Id;
+    @JsonProperty("creator_id")
+    private Long creatorId;
+    @JsonProperty("participant_id")
+    private Long participantId;
     @JsonProperty("channel_type")
     private String channelType;
 
