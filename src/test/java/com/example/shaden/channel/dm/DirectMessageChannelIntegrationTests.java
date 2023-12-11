@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -66,15 +67,18 @@ public class DirectMessageChannelIntegrationTests {
         // Create test users
         RegisterRequest testUser1 = new RegisterRequest("testUser1", "testuser1@mail.com", "testMan1");
         RegisterRequest testUser2 = new RegisterRequest("testUser2", "testuser2@mail.com", "testMan2");
-        authenticationService.register(testUser1);
-        authenticationService.register(testUser2);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+    
+        authenticationService.register(testUser1, response);
+        authenticationService.register(testUser2, response);
 
         // Authenticate test users
         AuthenticationRequest authenticationRequestUser1 = new AuthenticationRequest("testuser1@mail.com", "testMan1");
         AuthenticationRequest authenticationRequestUser2 = new AuthenticationRequest("testuser2@mail.com", "testMan2");
 
-        testUserToken1 = authenticationService.authenticate(authenticationRequestUser1).getAccessToken();
-        testUserToken2 = authenticationService.authenticate(authenticationRequestUser2).getAccessToken();
+        testUserToken1 = authenticationService.authenticate(authenticationRequestUser1, response).getAccessToken();
+        testUserToken2 = authenticationService.authenticate(authenticationRequestUser2, response).getAccessToken();
 
         // Retrieve test users from the repository
         testFriend1 = userRepository.findByEmail("testuser1@mail.com").orElse(null);
@@ -90,7 +94,7 @@ public class DirectMessageChannelIntegrationTests {
     @Test
     @Order(1)
     public void Create_dm_channel() throws Exception {
-        String uri = "/api/dm-channels";
+        String uri = "/api/channels/direct";
 
         CreateDmChannelRequest request = new CreateDmChannelRequest();
         request.setUserId(testFriend2.getId());
@@ -104,6 +108,7 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.message").value("Successfully created a DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
                 .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.channel_type").value("DIRECT"))
                 .andReturn();
 
         String jsonResponse = result.getResponse().getContentAsString();
@@ -115,7 +120,7 @@ public class DirectMessageChannelIntegrationTests {
     @Test
     @Order(2)
     public void Get_dm_channel_with_user_id() throws Exception {
-        String uri = "/api/dm-channels/user/" + testFriend2.getId();
+        String uri = "/api/channels/direct/user/" + testFriend2.getId();
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
@@ -124,13 +129,14 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.channel_type").value("DIRECT"));
     }
 
     @Test
     @Order(3)
     public void Get_dm_channel_with_id() throws Exception {
-        String uri = "/api/dm-channels/" + testDmChannelId1;
+        String uri = "/api/channels/direct/" + testDmChannelId1;
 
         mockMvc.perform(MockMvcRequestBuilders.get(uri)
                 .header("Authorization", "Bearer " + testUserToken1)
@@ -139,13 +145,14 @@ public class DirectMessageChannelIntegrationTests {
                 .andExpect(jsonPath("$.status").value(200))
                 .andExpect(jsonPath("$.message").value("Successfully retrieved DM channel"))
                 .andExpect(jsonPath("$.results.user1_id").value(testFriend1.getId()))
-                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()));
+                .andExpect(jsonPath("$.results.user2_id").value(testFriend2.getId()))
+                .andExpect(jsonPath("$.results.channel_type").value("DIRECT"));
     }
 
     @Test
     @Order(4)
     public void Delete_dm_channel_with_id() throws Exception {
-        String uri = "/api/dm-channels/" + testDmChannelId1;
+        String uri = "/api/channels/direct/" + testDmChannelId1;
 
         mockMvc.perform(MockMvcRequestBuilders.delete(uri)
                 .header("Authorization", "Bearer " + testUserToken1)

@@ -20,5 +20,7 @@ public class GroupChannelResponse {
     private Long creatorId;
     @JsonProperty("users")
     private List<UserProfileResponse> users;
+    @JsonProperty("channel_type")
+    private String channelType;
 
 }

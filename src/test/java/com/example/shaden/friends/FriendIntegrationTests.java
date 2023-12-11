@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -28,6 +29,8 @@ import com.example.shaden.features.friend.request.FriendRequest;
 import com.example.shaden.features.user.User;
 import com.example.shaden.features.user.UserRepository;
 import com.google.gson.Gson;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest
@@ -63,14 +66,16 @@ public class FriendIntegrationTests {
         RegisterRequest testUser2Request = new RegisterRequest("testFriendUser2", "testFriend2@mail.com", "testFriend2");
         RegisterRequest testUser3Request = new RegisterRequest("testFriendUser3", "testFriend3@mail.com", "testFriend3");
 
-        authenticationService.register(testUser1Request);
-        authenticationService.register(testUser2Request);
-        authenticationService.register(testUser3Request);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        authenticationService.register(testUser1Request, response);
+        authenticationService.register(testUser2Request, response);
+        authenticationService.register(testUser3Request, response);
 
         try {
-            testFriendUserToken1 = obtainAccessToken("testFriend1@mail.com", "testFriend1");
-            testFriendUserToken2 = obtainAccessToken("testFriend2@mail.com", "testFriend2");
-            testFriendUserToken3 = obtainAccessToken("testFriend3@mail.com", "testFriend3");
+            testFriendUserToken1 = obtainAccessToken("testFriend1@mail.com", "testFriend1", response);
+            testFriendUserToken2 = obtainAccessToken("testFriend2@mail.com", "testFriend2", response);
+            testFriendUserToken3 = obtainAccessToken("testFriend3@mail.com", "testFriend3", response);
             testFriendUser1 = userRepository.findByEmail("testFriend1@mail.com").get();
             testFriendUser2 = userRepository.findByEmail("testFriend2@mail.com").get();
             testFriendUser3 = userRepository.findByEmail("testFriend3@mail.com").get();
@@ -86,10 +91,10 @@ public class FriendIntegrationTests {
         userRepository.deleteAll();
     }
 
-    private String obtainAccessToken(String username, String password) throws Exception {
+    private String obtainAccessToken(String username, String password, HttpServletResponse response) throws Exception {
         AuthenticationRequest authenticationRequest = new AuthenticationRequest(username, password);
 
-        String token = authenticationService.authenticate(authenticationRequest).getAccessToken();
+        String token = authenticationService.authenticate(authenticationRequest, response).getAccessToken();
         return token;
 
     }

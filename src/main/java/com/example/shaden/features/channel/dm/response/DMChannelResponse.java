@@ -17,5 +17,7 @@ public class DMChannelResponse {
     private Long user1Id;
     @JsonProperty("user2_id")
     private Long user2Id;
+    @JsonProperty("channel_type")
+    private String channelType;
 
 }

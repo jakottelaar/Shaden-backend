@@ -16,7 +16,7 @@ import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/dm-channels")
+@RequestMapping("/api/channels/direct")
 @RequiredArgsConstructor
 public class DMChannelController {
     
@@ -55,6 +55,19 @@ public class DMChannelController {
         .statusCode(HttpStatus.OK.value())
         .message("Successfully retrieved DM channel")
         .results(dmChannelService.getDMChannelsWithUserId(userId))
+        .build();
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
+    }
+
+    @GetMapping
+    public ResponseEntity<ResponseData> getAllDMChannels() {
+        
+        ResponseData response = ResponseData.builder()
+        .statusCode(HttpStatus.OK.value())
+        .message("Successfully retrieved DM channels")
+        .results(dmChannelService.getAllDMChannels())
         .build();
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -46,14 +47,17 @@ public class UserIntegrationTests {
         
         RegisterRequest testUser = new RegisterRequest("testUser1","testuser1@mail.com", "testMan1");
         RegisterRequest testUser2 = new RegisterRequest("testUser2","testuser2@mail.com", "testMan2");
-        authenticationService.register(testUser);
-        authenticationService.register(testUser2);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        authenticationService.register(testUser, response);
+        authenticationService.register(testUser2, response);
 
         AuthenticationRequest authenticationRequestUser1 = new AuthenticationRequest("testuser1@mail.com", "testMan1");
         AuthenticationRequest authenticationRequestUser2 = new AuthenticationRequest("testuser2@mail.com", "testMan2");
 
-        accessTokenUser1 = authenticationService.authenticate(authenticationRequestUser1).getAccessToken();
-        accessTokenUser2 = authenticationService.authenticate(authenticationRequestUser2).getAccessToken();
+        accessTokenUser1 = authenticationService.authenticate(authenticationRequestUser1, response).getAccessToken();
+        accessTokenUser2 = authenticationService.authenticate(authenticationRequestUser2, response).getAccessToken();
 
     }
 

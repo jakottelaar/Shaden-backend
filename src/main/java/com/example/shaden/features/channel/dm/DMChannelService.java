@@ -1,6 +1,7 @@
 package com.example.shaden.features.channel.dm;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
@@ -8,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
+import com.example.shaden.features.channel.ChannelType;
 import com.example.shaden.features.channel.dm.request.CreateDmChannelRequest;
 import com.example.shaden.features.channel.dm.response.DMChannelResponse;
 import com.example.shaden.features.user.User;
@@ -51,6 +53,8 @@ public class DMChannelService {
         .user2(user2)
         .build();
 
+        dmChannel.setChannelType(ChannelType.DIRECT);
+
         dmChannel.setCreatedDate(LocalDateTime.now());
 
         dmChannelRepository.save(dmChannel);
@@ -59,6 +63,7 @@ public class DMChannelService {
         .channelId(dmChannel.getId())
         .user1Id(user1.getId())
         .user2Id(user2.getId())
+        .channelType(dmChannel.getChannelType().toString())
         .build();
 
     }
@@ -75,6 +80,7 @@ public class DMChannelService {
         .channelId(dmChannel.get().getId())
         .user1Id(dmChannel.get().getUser1().getId())
         .user2Id(dmChannel.get().getUser2().getId())
+        .channelType(dmChannel.get().getChannelType().toString())
         .build();
 
         return response;
@@ -103,6 +109,7 @@ public class DMChannelService {
         .channelId(dmChannel.getId())
         .user1Id(dmChannel.getUser1().getId())
         .user2Id(dmChannel.getUser2().getId())
+        .channelType(dmChannel.getChannelType().toString())
         .build();
 
         return response;
@@ -117,6 +124,28 @@ public class DMChannelService {
         }
 
         dmChannelRepository.deleteById(channelId);
+
+    }
+
+    public List<DMChannelResponse> getAllDMChannels() {
+        
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserPrincipal userPrincipal = (UserPrincipal) auth.getPrincipal();
+
+        long userId1 = userPrincipal.getUserId();
+
+        List<DMChannel> dmChannels = dmChannelRepository.findAllByUserId(userId1);
+
+        List<DMChannelResponse> convertedDmChannels = dmChannels.stream().map(dmChannel -> 
+            DMChannelResponse.builder()
+            .channelId(dmChannel.getId())
+            .user1Id(dmChannel.getUser1().getId())
+            .user2Id(dmChannel.getUser2().getId())
+            .channelType(dmChannel.getChannelType().toString())
+            .build()
+        ).toList();
+
+        return convertedDmChannels;
 
     }
 }
