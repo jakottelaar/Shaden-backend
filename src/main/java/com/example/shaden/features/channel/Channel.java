@@ -2,6 +2,8 @@ package com.example.shaden.features.channel;
 
 import java.time.LocalDateTime;
 
+import com.example.shaden.features.user.User;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +27,10 @@ public abstract class Channel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "creator_id" , referencedColumnName = "user_id")
+    private User creator;
     
     @Column(name = "created_date")
     private LocalDateTime createdDate;
