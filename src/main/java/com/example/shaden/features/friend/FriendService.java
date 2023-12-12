@@ -77,10 +77,6 @@ public class FriendService {
         UserPrincipal user = (UserPrincipal) auth.getPrincipal();
     
         List<Friendship> friendships = friendRepository.findAllFriendsByStatus(user.getUser(), FriendshipStatus.ACCEPTED);
-        
-        for (Friendship friendship2 : friendships) {
-            System.out.println(friendship2.getSender().getUsername() + " " + friendship2.getReceiver().getUsername());
-        }
 
         List<FriendResponse> friendResponses = friendships.stream()
             .map(friendship -> {
