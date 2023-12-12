@@ -26,6 +26,7 @@ public abstract class Channel {
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "channel_id")
     private Long id;
 
     @ManyToOne
