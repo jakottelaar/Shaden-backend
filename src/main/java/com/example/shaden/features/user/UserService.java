@@ -28,6 +28,7 @@ public class UserService {
             Optional<User> user = userRepository.findById(userPrincipal.getUserId());
             if (user.isPresent()) {
                 UserProfileResponse response = UserProfileResponse.builder()
+                .userId(user.get().getId())
                 .email(user.get().getEmail())
                 .username(user.get().getUsername())
                 .build();
