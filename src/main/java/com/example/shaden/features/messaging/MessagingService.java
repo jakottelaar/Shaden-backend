@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
@@ -15,7 +13,6 @@ import com.example.shaden.features.channel.ChannelRepository;
 import com.example.shaden.features.messaging.request.MessageRequest;
 import com.example.shaden.features.messaging.response.MessageResponse;
 import com.example.shaden.features.user.User;
-import com.example.shaden.features.user.UserPrincipal;
 import com.example.shaden.features.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
