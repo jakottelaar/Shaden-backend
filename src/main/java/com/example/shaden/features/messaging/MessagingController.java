@@ -18,11 +18,9 @@ public class MessagingController {
     
     private final MessagingService messagingService;
     private final SimpMessagingTemplate messagingTemplate;
-	private static final Logger LOG = LoggerFactory.getLogger(MessagingController.class);
 
     @MessageMapping("/send-message")
     public void sendMessage(@Payload MessageRequest messageRequest) {
-        LOG.info("Message request: {}", messageRequest);
         MessageResponse messageResponse = messagingService.saveMessage(messageRequest);
 
         messagingTemplate.convertAndSend("/queue/" + messageRequest.getChannelId(), messageResponse);

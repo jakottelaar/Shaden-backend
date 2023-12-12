@@ -1,10 +1,12 @@
 package com.example.shaden.features.messaging;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.example.shaden.exception.custom.ResourceNotFoundException;
@@ -13,6 +15,7 @@ import com.example.shaden.features.channel.ChannelRepository;
 import com.example.shaden.features.messaging.request.MessageRequest;
 import com.example.shaden.features.messaging.response.MessageResponse;
 import com.example.shaden.features.user.User;
+import com.example.shaden.features.user.UserPrincipal;
 import com.example.shaden.features.user.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +33,7 @@ public class MessagingService {
     	private static final Logger LOG = LoggerFactory.getLogger(MessagingService.class);
 
     public MessageResponse saveMessage(MessageRequest messageRequest) {
-        LOG.info("Message request: {}", messageRequest);
+
         Channel channel = channelRepository.findById(messageRequest.getChannelId()).orElseThrow(() -> new ResourceNotFoundException("Channel not found"));
 
         User sender = userRepository.findById(messageRequest.getSenderId()).orElseThrow(() -> new ResourceNotFoundException("User not found"));
@@ -56,6 +59,32 @@ public class MessagingService {
 
             
         return messageResponse;
+    }
+
+    public List<MessageResponse> getMessageHistory(Long channelId) {
+
+        List<Message> messages = messageRepository.findAllByChannelId(channelId);
+
+        if (messages.isEmpty()) {
+            throw new ResourceNotFoundException("No messages found");
+        }
+
+        List<MessageResponse> messageResponses = messages.stream()
+            .map(this::mapMessageToMessageResponse)
+            .toList();
+
+        return messageResponses;
+    }
+
+    private MessageResponse mapMessageToMessageResponse(Message message) {
+        return MessageResponse.builder()
+                .messageId(message.getId())
+                .channelId(message.getChannel().getId())
+                .senderId(message.getSender().getId())
+                .content(message.getContent())
+                .createdDate(message.getCreatedDate().toString())
+                .lastModifiedDate(message.getLastModifiedDate().toString())
+                .build();
     }
     
 
