@@ -28,6 +28,7 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 1000)
     private String content;
     
     @ManyToOne
@@ -35,7 +36,7 @@ public class Message {
     private User sender;
 
     @ManyToOne
-    @JoinColumn(name = "channel_id")
+    @JoinColumn(name = "channel_id", referencedColumnName = "channel_id")
     private Channel channel;
 
     @Column(name = "created_date")
