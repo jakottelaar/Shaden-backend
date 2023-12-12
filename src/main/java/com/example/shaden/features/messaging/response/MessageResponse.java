@@ -17,6 +17,8 @@ public class MessageResponse {
     private String content;
     @JsonProperty("sender_id")
     private Long senderId;
+    @JsonProperty("sender_username")
+    private String senderUsername;
     @JsonProperty("channel_id")
     private Long channelId;
     @JsonProperty("created_date")

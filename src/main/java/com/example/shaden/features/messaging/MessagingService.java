@@ -45,15 +45,7 @@ public class MessagingService {
 
         messageRepository.save(message);
 
-        MessageResponse messageResponse = MessageResponse.builder()
-                .messageId(message.getId())
-                .channelId(message.getChannel().getId())
-                .senderId(message.getSender().getId())
-                .content(message.getContent())
-                .createdDate(message.getCreatedDate().toString())
-                .lastModifiedDate(message.getLastModifiedDate().toString())
-                .build();
-
+        MessageResponse messageResponse = mapMessageToMessageResponse(message);
             
         return messageResponse;
     }
@@ -77,6 +69,7 @@ public class MessagingService {
         return MessageResponse.builder()
                 .messageId(message.getId())
                 .channelId(message.getChannel().getId())
+                .senderUsername(message.getSender().getUsername())
                 .senderId(message.getSender().getId())
                 .content(message.getContent())
                 .createdDate(message.getCreatedDate().toString())
