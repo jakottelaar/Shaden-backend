@@ -52,7 +52,7 @@ public class MessagingService {
 
     public List<MessageResponse> getMessageHistory(Long channelId) {
 
-        List<Message> messages = messageRepository.findAllByChannelId(channelId);
+        List<Message> messages = messageRepository.findAllByChannelIdOrderByCreatedDateAsc(channelId);
 
         if (messages.isEmpty()) {
             throw new ResourceNotFoundException("No messages found");

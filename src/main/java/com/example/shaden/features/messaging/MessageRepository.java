@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface MessageRepository extends JpaRepository<Message, Long>{
     
-    List<Message> findAllByChannelId(Long channelId);
+    List<Message> findAllByChannelIdOrderByCreatedDateAsc(Long channelId);
 
 }
