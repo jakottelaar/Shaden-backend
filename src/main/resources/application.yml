@@ -30,3 +30,6 @@ application:
       expiration: ${ACCESS_TOKEN_EXPIRATION_TIME}
       refresh-token:
         expiration: ${REFRESH_TOKEN_EXPIRATION_TIME}
+  frontend:
+    web-app-url: ${FRONTEND_WEB_APP_URL}
+    landing-page-url: ${FRONTEND_LANDING_PAGE_URL}

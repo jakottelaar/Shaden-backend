@@ -1,5 +1,6 @@
 package com.example.shaden.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -27,6 +28,11 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final CustomJwtAuthenticationEntryPoint authenticationEntryPoint;
 
+    @Value("${application.frontend.web-app-url}")
+    private String webAppUrl;
+    @Value("${application.frontend.landing-page-url}")
+    private String landingPageUrl;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
@@ -48,7 +54,7 @@ public class SecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin(webAppUrl + "," + landingPageUrl);
         configuration.addAllowedMethod("*");
         configuration.addAllowedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
