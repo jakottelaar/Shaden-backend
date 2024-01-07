@@ -76,6 +76,13 @@ public class MessagingService {
                 .lastModifiedDate(message.getLastModifiedDate().toString())
                 .build();
     }
+
+    public void deleteMessage(Long messageId, Long channelId) {
+        Message message = messageRepository.findByIdAndChannelId(messageId, channelId)
+                .orElseThrow(() -> new ResourceNotFoundException("Message not found"));
+
+        messageRepository.delete(message);
+    }
     
 
 }
