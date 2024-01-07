@@ -16,6 +16,12 @@ spring:
   devtools:
     restart:
       enabled: true
+  rabbitmq:
+    host: localhost
+    port: 61613
+    username: guest
+    password: guest
+
 logging:
   level:
     root: WARN

@@ -14,10 +14,27 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer{
     @Value("${application.frontend.web-app-url}")
     private String webAppUrl;
 
+    @Value("${spring.rabbitmq.host}")
+    private String rabbitmqHost;
+
+    @Value("${spring.rabbitmq.port}")
+    private int rabbitmqPort;
+
+    @Value("${spring.rabbitmq.username}")
+    private String rabbitmqUsername;
+
+    @Value("${spring.rabbitmq.password}")
+    private String rabbitmqPassword;
+
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.enableSimpleBroker("/topic", "/queue");
-        registry.setApplicationDestinationPrefixes("/app");
+        registry
+        .setApplicationDestinationPrefixes("/app")
+        .enableStompBrokerRelay("/topic", "/queue")
+        .setRelayHost(rabbitmqHost)
+        .setRelayPort(rabbitmqPort)
+        .setClientLogin(rabbitmqUsername)
+        .setClientPasscode(rabbitmqPassword);
     }
 
     @Override
