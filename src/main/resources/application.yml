@@ -17,10 +17,10 @@ spring:
     restart:
       enabled: true
   rabbitmq:
-    host: localhost
-    port: 61613
-    username: guest
-    password: guest
+    host: ${RABBIT_MQ_HOST}
+    port: ${RABBIT_MQ_PORT}
+    username: ${RABBIT_MQ_USERNAME}
+    password: ${RABBIT_MQ_PASSWORD}
 
 logging:
   level:
