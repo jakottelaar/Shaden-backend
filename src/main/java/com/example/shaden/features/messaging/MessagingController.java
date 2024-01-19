@@ -21,7 +21,7 @@ public class MessagingController {
     public void sendMessage(@Payload MessageRequest messageRequest) {
         MessageResponse messageResponse = messagingService.saveMessage(messageRequest);
 
-        messagingTemplate.convertAndSend("/queue/" + messageRequest.getChannelId(), messageResponse);
+        messagingTemplate.convertAndSend("/topic/" + messageRequest.getChannelId(), messageResponse);
     }
 
 }
